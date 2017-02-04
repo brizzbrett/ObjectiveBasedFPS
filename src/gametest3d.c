@@ -1,7 +1,7 @@
 /**
  * gametest3d
  * @license The MIT License (MIT)
- *   @copyright Copyright (c) 2015 EngineerOfLies
+ *   @copyright Copyright (c) 2017 Brizzbrett
  *    Permission is hereby granted, free of charge, to any person obtaining a copy
  *    of this software and associated documentation files (the "Software"), to deal
  *    in the Software without restriction, including without limitation the rights
@@ -21,6 +21,7 @@
 #include "simple_logger.h"
 #include "graphics3d.h"
 #include "shader.h"
+#include "linearmath.h"
 
 int main(int argc, char *argv[])
 {
@@ -28,6 +29,14 @@ int main(int argc, char *argv[])
     GLuint triangleBufferObject;
     char bGameLoopRunning = 1;
     SDL_Event e;
+
+	mat4x4 myMatrix;
+	vec4 myVec;
+	vec4 transformedVec;
+
+	mat4x4_translate(myMatrix, 10.0f, 0.0f, 0.0f);
+	mat4x4_mul_vec4(transformedVec, myMatrix, myVec);
+
     const float triangleVertices[] = {
         0.0f, 0.5f, 0.0f, 1.0f,
         0.5f, -0.366f, 0.0f, 1.0f,
@@ -37,6 +46,8 @@ int main(int argc, char *argv[])
         0.0f, 1.0f, 0.0f, 1.0f,
         0.0f, 0.0f, 1.0f, 1.0f  
     }; //we love you vertices!
+
+
     
     init_logger("gametest3d.log");
     if (graphics3d_init(1024,768,1,"Brett's Game",33) != 0)

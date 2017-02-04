@@ -40,7 +40,7 @@ int graphics3d_init(int sw,int sh,int fullscreen,const char *project,Uint32 fram
     atexit(SDL_Quit);
     __graphics3d_frame_delay = frameDelay;
     
-    __graphics3d_window = SDL_CreateWindow(project?project:"gametest3d",
+    __graphics3d_window = SDL_CreateWindow(project?project:"ObjectiveBasedFPS",
                               SDL_WINDOWPOS_UNDEFINED,
                               SDL_WINDOWPOS_UNDEFINED,
                               sw, sh,
