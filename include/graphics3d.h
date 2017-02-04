@@ -22,7 +22,7 @@
  *    SOFTWARE.
  */
 #include <SDL.h>
-#include <GL/glew.h>
+#include <glew.h>
 
 /**
  * @brief initialize the 3d graphics system

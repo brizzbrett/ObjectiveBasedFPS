@@ -33,13 +33,13 @@ int main(int argc, char *argv[])
         0.5f, -0.366f, 0.0f, 1.0f,
         -0.5f, -0.366f, 0.0f, 1.0f,
         //next part contains vertex colors
-        1.0f, 0.0f, 0.0f, 1.0f,
+        1.0f, 1.0f, 1.0f, 1.0f,
         0.0f, 1.0f, 0.0f, 1.0f,
         0.0f, 0.0f, 1.0f, 1.0f  
     }; //we love you vertices!
     
     init_logger("gametest3d.log");
-    if (graphics3d_init(1024,768,1,"gametest3d",33) != 0)
+    if (graphics3d_init(1024,768,1,"Brett's Game",33) != 0)
     {
         return -1;
     }
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
                 bGameLoopRunning = 0;
         }
 
-        glClearColor(0.0,0.0,0.0,0.0);
+        glClearColor(1.0,1.0,1.0,1.0);
         glClear(GL_COLOR_BUFFER_BIT);
 
         /* drawing code in here! */
