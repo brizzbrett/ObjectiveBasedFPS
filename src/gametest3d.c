@@ -21,7 +21,9 @@
 #include "simple_logger.h"
 #include "graphics3d.h"
 #include "shader.h"
-#include "linearmath.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
 
 int main(int argc, char *argv[])
 {
@@ -30,12 +32,13 @@ int main(int argc, char *argv[])
     char bGameLoopRunning = 1;
     SDL_Event e;
 
-	mat4x4 myMatrix;
-	vec4 myVec;
-	vec4 transformedVec;
+	GLuint program_id;
+	GLuint matrix_id;
 
-	mat4x4_translate(myMatrix, 10.0f, 0.0f, 0.0f);
-	mat4x4_mul_vec4(transformedVec, myMatrix, myVec);
+	GLuint width=16, height=9;
+	glm::mat4 Projection, View, Model;
+
+	glm::mat4 mvp;
 
     const float triangleVertices[] = {
         0.0f, 0.5f, 0.0f, 1.0f,
@@ -45,15 +48,15 @@ int main(int argc, char *argv[])
         1.0f, 1.0f, 1.0f, 1.0f,
         0.0f, 1.0f, 0.0f, 1.0f,
         0.0f, 0.0f, 1.0f, 1.0f  
-    }; //we love you vertices!
+    }; 
 
-
-    
-    init_logger("gametest3d.log");
+	init_logger("gametest3d.log");
     if (graphics3d_init(1024,768,1,"Brett's Game",33) != 0)
     {
         return -1;
     }
+
+	program_id = graphics3d_get_shader_program();
         
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao); //make our vertex array object, we need it to restore state we set after binding it. Re-binding reloads the state associated with it.
@@ -63,10 +66,30 @@ int main(int argc, char *argv[])
     glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertices), triangleVertices, GL_STATIC_DRAW); //formatting the data for the buffer
     glBindBuffer(GL_ARRAY_BUFFER, 0); //unbind any buffers
     
-    slog("glError: %d", glGetError());
+	matrix_id = glGetUniformLocation(program_id, "mvp");
+
+    slog("glError: %d, program id: %i, matrix id: %i", glGetError(), program_id, matrix_id);
     
+
+
     while (bGameLoopRunning)
     {
+
+		Projection = glm::perspective(glm::radians(45.0f), (float) width / (float)height, 0.1f, 100.0f);
+	
+		// Camera matrix
+		View = glm::lookAt(
+			glm::vec3(30,90,30), // Camera is at (4,3,3), in World Space
+			glm::vec3(0,0,0), // and looks at the origin
+			glm::vec3(0,1,0)  
+			);
+  
+		// Model matrix : an identity matrix (model will be at the origin)
+		Model = glm::mat4(1.0f);
+
+		// Our ModelViewProjection : multiplication of our 3 matrices
+		mvp = Projection * View * Model;
+
         if ( SDL_PollEvent(&e) ) 
         {
             if (e.type == SDL_QUIT)
@@ -75,21 +98,26 @@ int main(int argc, char *argv[])
                 bGameLoopRunning = 0;
         }
 
-        glClearColor(1.0,1.0,1.0,1.0);
+        glClearColor(0.0,0.0,0.0,1.0);
         glClear(GL_COLOR_BUFFER_BIT);
 
         /* drawing code in here! */
-        glUseProgram(graphics3d_get_shader_program());
+        glUseProgram(program_id);
+		
+		glUniformMatrix4fv(matrix_id, 1, GL_FALSE, &mvp[0][0]);
+
         glBindBuffer(GL_ARRAY_BUFFER, triangleBufferObject); //bind the buffer we're applying attributes to
         glEnableVertexAttribArray(0); //0 is our index, refer to "location = 0" in the vertex shader
         glEnableVertexAttribArray(1); //attribute 1 is for vertex color data
         glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0); //tell gl (shader!) how to interpret our vertex data
-        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, (void*)48); //color data is 48 bytes in to the array
+        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, (void*)(12*sizeof(float))); //color data is 48 bytes in to the array
+
         glDrawArrays(GL_TRIANGLES, 0, 3);
         
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
         glUseProgram(0);
+
         /* drawing code above here! */
         graphics3d_next_frame();
     } 
