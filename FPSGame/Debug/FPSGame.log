@@ -1,6 +1,0 @@
-﻿  Main.cpp
-c:\users\brett\desktop\3d game dev\fpsgame\fpsgame\include\camera.hpp(76): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-c:\users\brett\desktop\3d game dev\fpsgame\fpsgame\include\camera.hpp(78): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-c:\users\brett\desktop\3d game dev\fpsgame\fpsgame\src\main.cpp(148): warning C4101: 'event': unreferenced local variable
-  FPSGame.vcxproj -> C:\Users\Brett\Desktop\3D Game Dev\FPSGame\Debug\FPSGame.exe
-  FPSGame.vcxproj -> C:\Users\Brett\Desktop\3D Game Dev\FPSGame\Debug\FPSGame.pdb (Full PDB)
