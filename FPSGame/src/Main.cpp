@@ -149,7 +149,7 @@ void GameLoop(Camera* camera, GLuint vbuff, GLuint cbuff, GLuint pid)
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		camera->HandleMovement(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y, deltaTime.getElapsedTime().asSeconds());
+		camera->HandleMovement(sf::Mouse::getPosition(*getWindow()).x, sf::Mouse::getPosition(*getWindow()).y, deltaTime.getElapsedTime().asSeconds());
 
 		deltaTime.restart();
 

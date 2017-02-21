@@ -19,7 +19,7 @@ Camera::Camera(float theWindowWidth, float theWindowHeight, glm::vec3 cameraPosi
 
 	viewMatrix = glm::lookAt(position, position + direction, up);
 
-	speed = 0.3f;
+	speed = 1.0f;
 
 	horizMovement = 3.14f;
 	vertMovement = 0;
@@ -46,20 +46,12 @@ void Camera::HandleMouseMove(int mouseX, int mouseY, double deltaTime)
 
 	sf::Mouse::setPosition(windowMidPoint, *getWindow());
 
-	horizMovement += yawSensitivity * deltaTime * float(1616 / 2 - mouseX);
-	vertMovement += pitchSensitivity * deltaTime * float(962/ 2 - mouseY);
+	horizMovement += yawSensitivity * deltaTime * float(SCREEN_WIDTH / 2 - mouseX);
+	vertMovement += pitchSensitivity * deltaTime * float(SCREEN_HEIGHT/ 2 - mouseY);
 
-	if (vertMovement >= 180)
-	{
-		vertMovement == 180;
-	}
-	if (vertMovement <= -180)
-	{
-		vertMovement == -180;
-	}
 	std::cout << "Mid window values: " << windowMidPoint.x << "\t" << windowMidPoint.y << std::endl;
 	std::cout << "Mouse values     : " << mouseX << "\t" << mouseY << std::endl;
-	std::cout << horizMovement << "\t" << vertMovement << std::endl << std::endl;
+	std::cout << "Horizontal Angle: " << horizMovement << "\t Vertical Angle:" << vertMovement << std::endl << std::endl;
 
 	// Direction : Spherical coordinates to Cartesian coordinates conversion
 	direction = glm::vec3(
@@ -105,13 +97,13 @@ void Camera::Move(double deltaTime)
 	if (holdingLeftStrafe)
 	{
 		slog("Strafing left...");
-		position += speed * right;
+		position -= speed/10 * right;
 	}
 
 	if (holdingRightStrafe)
 	{
 		slog("Strafing right...");
-		position -= speed * right;
+		position += speed/10 * right;
 	}
 }
 
