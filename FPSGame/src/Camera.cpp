@@ -1,13 +1,13 @@
 #include "Camera.hpp"
 
-const double Camera::TO_RADS = 3.141592654 / 180.0; // The value of 1 degree in radians
-
 #define SCREEN_WIDTH 1280 /**<width of the window */ 
 #define SCREEN_HEIGHT 720 /**<height of the window */ 
 
-Camera::Camera(float theWindowWidth, float theWindowHeight)
-{
-	InitCamera();
+Camera::Camera(float theWindowWidth, float theWindowHeight, glm::vec3 cameraPosition)
+{	
+	position = cameraPosition;
+	direction = glm::vec3(1.0f);
+	up = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	windowWidth = theWindowWidth;
 	windowHeight = theWindowHeight;
@@ -15,61 +15,60 @@ Camera::Camera(float theWindowWidth, float theWindowHeight)
 	// Calculate the middle of the window
 	windowMidPoint = sf::Vector2i(windowWidth / 2, windowHeight / 2);
 
-	sf::Mouse::setPosition(windowMidPoint, *getWindow());
-}
+	projectionMatrix = glm::perspective(glm::radians(90.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.01f, 1000.0f);
 
-Camera::~Camera()
-{
-	// Nothing to do here - we don't need to free memory as all member variables
-	// were declared on the stack.
-}
+	viewMatrix = glm::lookAt(position, position + direction, up);
 
-void Camera::InitCamera()
-{
-	// Set position, rotation and speed values to zero
-	position = glm::vec3(0.0f,0.0f,0.0f);
-	rotation = glm::vec3(0.0f);
-	speed = glm::vec3(0.0f);
+	speed = 0.3f;
 
-	// How fast we move (higher values mean we move and strafe faster)
-	movementSpeedFactor = 5.0f;
+	horizMovement = 3.14f;
+	vertMovement = 0;
 
-	pitchSensitivity = 0.2; // How sensitive mouse movements affect looking up and down
-	yawSensitivity = 0.2; // How sensitive mouse movements affect looking left and right
+	pitchSensitivity = 0.002; // How sensitive mouse movements affect looking up and down
+	yawSensitivity = 0.002; // How sensitive mouse movements affect looking left and right
 
 	// To begin with, we aren't holding down any keys
 	holdingForward = false;
 	holdingBackward = false;
 	holdingLeftStrafe = false;
 	holdingRightStrafe = false;
+	
+	sf::Mouse::setPosition(windowMidPoint, *getWindow());
 }
 
-// Function to convert degrees to radians
-const double Camera::toRads(const double &theAngleInDegrees) const
+Camera::~Camera()
 {
-	return theAngleInDegrees * TO_RADS;
 }
 
 // Function to deal with mouse position changes
 void Camera::HandleMouseMove(int mouseX, int mouseY, double deltaTime)
 {
-	// Calculate our horizontal and vertical mouse movement from middle of the window
-	float horizMovement = 0;
-	float vertMovement = 0;
 
-	horizMovement += yawSensitivity * deltaTime * float(SCREEN_WIDTH / 2 - mouseX);
-	vertMovement += pitchSensitivity * deltaTime * float(SCREEN_HEIGHT / 2 - mouseY);
+	sf::Mouse::setPosition(windowMidPoint, *getWindow());
 
+	horizMovement += yawSensitivity * deltaTime * float(1616 / 2 - mouseX);
+	vertMovement += pitchSensitivity * deltaTime * float(962/ 2 - mouseY);
+
+	if (vertMovement >= 180)
+	{
+		vertMovement == 180;
+	}
+	if (vertMovement <= -180)
+	{
+		vertMovement == -180;
+	}
 	std::cout << "Mid window values: " << windowMidPoint.x << "\t" << windowMidPoint.y << std::endl;
 	std::cout << "Mouse values     : " << mouseX << "\t" << mouseY << std::endl;
 	std::cout << horizMovement << "\t" << vertMovement << std::endl << std::endl;
 
 	// Direction : Spherical coordinates to Cartesian coordinates conversion
-	rotation = glm::vec3(
+	direction = glm::vec3(
 		cos(vertMovement) * sin(horizMovement),
 		sin(vertMovement),
 		cos(vertMovement) * cos(horizMovement)
 	);
+
+	direction = glm::normalize(direction);
 
 	right = glm::vec3(
 		sin(horizMovement - 3.14f / 2.0f),
@@ -77,26 +76,14 @@ void Camera::HandleMouseMove(int mouseX, int mouseY, double deltaTime)
 		cos(vertMovement - 3.14f / 2.0f)
 	);
 
-	up = glm::cross(right, rotation);
-
-	// Reset the mouse position to the centre of the window each frame
-	//sf::Mouse::setPosition(windowMidPoint, *getWindow());
+	up = glm::cross(right, direction);
 }
 
 // Function to calculate which direction we need to move the camera and by what amount
 void Camera::Move(double deltaTime)
 {
 	// Vector to break up our movement into components along the X, Y and Z axis
-	glm::vec3 movement;
-
-	// Get the sine and cosine of our X and Y axis rotation
-	double sinXRot = sin(toRads(rotation.x));
-	double cosXRot = cos(toRads(rotation.x));
-
-	double sinYRot = sin(toRads(rotation.y));
-	double cosYRot = cos(toRads(rotation.y));
-
-	double pitchLimitFactor = cosXRot; // This cancels out moving on the Z axis when we're looking up or down
+	glm::vec3 movement = glm::vec3(0.0f);
 
 	holdingForward = sf::Keyboard::isKeyPressed(sf::Keyboard::W);
 	holdingBackward = sf::Keyboard::isKeyPressed(sf::Keyboard::S);
@@ -106,45 +93,36 @@ void Camera::Move(double deltaTime)
 	if (holdingForward)
 	{
 		slog("Moving forward...");
-		movement += rotation;
+		position += speed * direction;
 	}
 
 	if (holdingBackward)
 	{
 		slog("Moving backward...");
-		movement -= rotation;
+		position -= speed * direction;
 	}
 
 	if (holdingLeftStrafe)
 	{
 		slog("Strafing left...");
-		movement -= right;
+		position += speed * right;
 	}
 
 	if (holdingRightStrafe)
 	{
 		slog("Strafing right...");
-		movement += right;
+		position -= speed * right;
 	}
-
-	// Normalise our movement vector
-	if (movement != glm::vec3(0.0f))
-	{
-		movement = glm::normalize(movement);
-	}
-
-	// Calculate our value to keep the movement the same speed regardless of the framerate...
-	double framerateIndependentFactor = movementSpeedFactor * deltaTime;
-
-	// .. and then apply it to our movement vector.
-	movement *= framerateIndependentFactor;
-
-	// Finally, apply the movement to our position
-	position += movement;
 }
 
 void Camera::HandleMovement(int mouseX, int mouseY, double deltaTime) 
 {
 	this->HandleMouseMove(mouseX, mouseY, deltaTime);
 	this->Move(deltaTime);
+
+	setViewMatrix(glm::lookAt(this->getPosition(), 
+							  this->getPosition() + this->getDirection(), 
+							  this->getUp()
+							  )
+	);
 }

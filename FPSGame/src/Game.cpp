@@ -27,7 +27,7 @@ sf::RenderWindow* getWindow()
 }
 
 /*
-* @brief initializes the game from graphics to loading scene and managing client connection
+* @brief initializes the game from graphics to loading scene
 */
 void GameInit()
 {
