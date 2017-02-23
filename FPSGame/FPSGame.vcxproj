@@ -25,13 +25,15 @@
     <ClCompile Include="src\ResourceManager.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\SimpleLogger.cpp" />
+    <ClCompile Include="src\VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Camera.hpp" />
     <ClInclude Include="include\Game.hpp" />
+    <ClInclude Include="include\ResourceManager.hpp" />
     <ClInclude Include="include\Shader.hpp" />
     <ClInclude Include="include\SimpleLogger.hpp" />
-    <ClInclude Include="src\ResourceManager.hpp" />
+    <ClInclude Include="include\VertexBuffer.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D33D94DD-A353-4AC5-AC43-3B013D840C2D}</ProjectGuid>

@@ -26,12 +26,8 @@ sf::Clock getClock();
 sf::RenderWindow* getWindow();
 
 /*
-* @brief initializes the game from graphics to loading scene and managing client connection
+* @brief initializes the game from graphics
+* @return true if graphics initialize correctly
 */
-void GameInit();
-
-/*
-* @brief Initializes sfml window and glew
-*/
-void GraphicsInit();
+GLuint GameInit();
 #endif

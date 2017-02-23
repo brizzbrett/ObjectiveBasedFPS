@@ -5,11 +5,43 @@
 
 #include "SimpleLogger.hpp"
 
-extern GLuint g_shader_prog; /**<global basic mvp shader and texture drawing*/
+class Shader
+{
 
-/**
-* @brief compiles a vertex and fragment shader and attaches it into a program
-* @return id of compiled program
-*/
-GLuint ShadersInit();
+protected:
+
+	GLuint program; /**<the shader program */
+	GLuint vertexShader; /**<the vertex shader data */
+	GLuint fragmentShader; /**<the fragment shader data */
+
+	/*
+	* @brief Creates a shader from a file
+	* @param shaderType the type of shader (E.g. VERTEX, FRAGMENT, GEOMETRY)
+	* @param shaderFileStr a string of the file path for the shader
+	* @return the shader data
+	*/
+	GLuint CreateShader(GLenum shaderType, const char *shaderFileStr);
+
+public:
+
+	/*
+	* @brief Getter: get's the shader program
+	* @return the shader program
+	*/
+	GLuint getProgram() { return program; };
+
+	/*
+	* @brief Shader Constructor: has two overloads for vertex shader file path and fragment shader filepath
+	* @param vsPath a string of the vertex shader file path
+	* @param fsPath a string of the fragment shader file path
+	*/
+	Shader(const char *vsPath, const char *fsPath);
+
+	/*
+	* @brief Shader Destructor: deletes the program
+	*/
+	~Shader();
+
+};
+
 #endif 

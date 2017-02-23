@@ -2,11 +2,7 @@
 #include <stdlib.h>
 #include "shader.hpp"
 
-#define MAX_STR_LEN 4096
-
-GLuint g_shader_prog;
-
-GLuint CreateShader(GLenum eShaderType, const char *strShaderFile)
+GLuint Shader::CreateShader(GLenum shaderType, const char *shaderFileStr)
 {
 	char shaderSource[4096];
 	char inChar;
@@ -19,10 +15,10 @@ GLuint CreateShader(GLenum eShaderType, const char *strShaderFile)
 	char strShaderType[16];
 	const char *ss;
 
-	shaderFile = fopen(strShaderFile, "r");
+	shaderFile = fopen(shaderFileStr, "r");
 	if (!shaderFile)
 	{
-		printf("failed to open shader file: %s\n", strShaderFile);
+		printf("failed to open shader file: %s\n", shaderFileStr);
 		return 0;
 	}
 	while (fscanf(shaderFile, "%c", &inChar) > 0)
@@ -32,7 +28,7 @@ GLuint CreateShader(GLenum eShaderType, const char *strShaderFile)
 	shaderSource[i - 1] = '\0';
 	fclose(shaderFile);
 
-	shader = glCreateShader(eShaderType);
+	shader = glCreateShader(shaderType);
 	ss = shaderSource;
 	glShaderSource(shader, 1, &ss, NULL);
 
@@ -45,7 +41,7 @@ GLuint CreateShader(GLenum eShaderType, const char *strShaderFile)
 
 		glGetShaderInfoLog(shader, infoLogLength, NULL, strInfoLog);
 
-		switch (eShaderType)
+		switch (shaderType)
 		{
 		case GL_VERTEX_SHADER:
 			sprintf(strShaderType, "vertex");
@@ -65,12 +61,9 @@ GLuint CreateShader(GLenum eShaderType, const char *strShaderFile)
 	return shader;
 }
 
-GLuint BuildShaderProgram(const char *vsPath, const char *fsPath)
+Shader::Shader(const char *vsPath, const char *fsPath)
 {
 	GLint infoLogLength;
-	GLuint vertexShader;
-	GLuint fragmentShader;
-	GLuint program;
 	GLint status;
 	GLchar strInfoLog[4096];
 
@@ -93,22 +86,16 @@ GLuint BuildShaderProgram(const char *vsPath, const char *fsPath)
 		glGetProgramInfoLog(program, infoLogLength, NULL, strInfoLog);
 
 		printf("Shader linker failure: %s\n", strInfoLog);
-		return 0;
+		exit(1);
 	}
-
-	g_shader_prog = program;
 
 	glDetachShader(program, vertexShader);
 	glDetachShader(program, fragmentShader);
 
-	return program;
-}
+	glUseProgram(program);
 
-/**
-* @brief compiles a vertex and fragment shader and attaches it into a program
-* @return id of compiled program
-*/
-GLuint ShadersInit()
+}
+Shader::~Shader()
 {
-	return BuildShaderProgram("shaders\\vs1.glsl", "shaders\\fs1.glsl");
+	glDeleteProgram(program);
 }

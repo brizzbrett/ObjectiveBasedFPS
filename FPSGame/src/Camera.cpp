@@ -52,6 +52,7 @@ void Camera::HandleMouseMove(int mouseX, int mouseY, double deltaTime)
 	std::cout << "Mid window values: " << windowMidPoint.x << "\t" << windowMidPoint.y << std::endl;
 	std::cout << "Mouse values     : " << mouseX << "\t" << mouseY << std::endl;
 	std::cout << "Horizontal Angle: " << horizMovement << "\t Vertical Angle:" << vertMovement << std::endl << std::endl;
+	std::cout << "Camera position: " << position.x << "," << position.y << "," << position.z;
 
 	// Direction : Spherical coordinates to Cartesian coordinates conversion
 	direction = glm::vec3(
