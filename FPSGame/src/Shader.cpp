@@ -61,7 +61,8 @@ GLuint Shader::CreateShader(GLenum shaderType, const char *shaderFileStr)
 	return shader;
 }
 
-Shader::Shader(const char *vsPath, const char *fsPath)
+Shader::Shader(const char *vsPath, const char *fsPath, GLuint vertA):
+vertexAttrib(vertA)
 {
 	GLint infoLogLength;
 	GLint status;
@@ -91,8 +92,6 @@ Shader::Shader(const char *vsPath, const char *fsPath)
 
 	glDetachShader(program, vertexShader);
 	glDetachShader(program, fragmentShader);
-
-	glUseProgram(program);
 
 }
 Shader::~Shader()

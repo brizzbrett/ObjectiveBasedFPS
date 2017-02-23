@@ -83,14 +83,16 @@ ResourceManager::ResourceManager()
 {
 	shaderArray = new std::vector<Shader*>();
 
-	Shader* shader = new Shader("shaders\\vs1.glsl", "shaders\\fs1.glsl");
+	Shader* shader = new Shader("shaders\\vs1.glsl", "shaders\\fs1.glsl", 0);
+	Shader* shader2 = new Shader("shaders\\vs1.glsl", "shaders\\fs1.glsl", 1);
 
 	shaderArray->push_back(shader);
+	shaderArray->push_back(shader2);
 
 	vertexBufferArray = new std::vector<VertexBuffer*>();
 
-	VertexBuffer* vertbuffer = new VertexBuffer(g_vertex_buffer_data, sizeof(g_vertex_buffer_data), GL_TRIANGLES, 12 * 3, sizeof(GLfloat) * 3);
-	VertexBuffer* colorbuffer = new VertexBuffer(g_color_buffer_data, sizeof(g_color_buffer_data), GL_TRIANGLES, 12 * 3, 0);
+	VertexBuffer* vertbuffer = new VertexBuffer(g_vertex_buffer_data, sizeof(g_vertex_buffer_data), GL_TRIANGLES, 12 * 3, sizeof(GLfloat) * 3, shaderArray->at(0));
+	ColorBuffer* colorbuffer = new ColorBuffer(g_color_buffer_data, sizeof(g_color_buffer_data), GL_TRIANGLES, 12 * 3, 0, shaderArray->at(1));
 
 	vertexBufferArray->push_back(vertbuffer);
 	vertexBufferArray->push_back(colorbuffer);
@@ -98,7 +100,18 @@ ResourceManager::ResourceManager()
 
 ResourceManager::~ResourceManager()
 {
+	for (std::vector<Shader*>::iterator it = shaderArray->begin(); it != shaderArray->end(); it++)
+	{
+		delete *it;
+	}
+
 	delete shaderArray;
+
+	for (std::vector<VertexBuffer*>::iterator it = vertexBufferArray->begin(); it != vertexBufferArray->end(); it++)
+	{
+		delete *it;
+	}
+
 	delete vertexBufferArray;
 }
 

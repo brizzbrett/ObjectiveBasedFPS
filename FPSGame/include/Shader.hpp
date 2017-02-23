@@ -13,6 +13,7 @@ protected:
 	GLuint program; /**<the shader program */
 	GLuint vertexShader; /**<the vertex shader data */
 	GLuint fragmentShader; /**<the fragment shader data */
+	GLuint vertexAttrib; /**<the vertex attribute */
 
 	/*
 	* @brief Creates a shader from a file
@@ -31,11 +32,17 @@ public:
 	GLuint getProgram() { return program; };
 
 	/*
+	* @brief Getter: get's the vertex attribute
+	* @return the vertex attribute
+	*/
+	GLuint getVertexAttrib() { return vertexAttrib; };
+
+	/*
 	* @brief Shader Constructor: has two overloads for vertex shader file path and fragment shader filepath
 	* @param vsPath a string of the vertex shader file path
 	* @param fsPath a string of the fragment shader file path
 	*/
-	Shader(const char *vsPath, const char *fsPath);
+	Shader(const char *vsPath, const char *fsPath, GLuint vertA);
 
 	/*
 	* @brief Shader Destructor: deletes the program

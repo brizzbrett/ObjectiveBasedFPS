@@ -8,15 +8,18 @@
 #endif
 #include "game.hpp"
 #include "Camera.hpp"
-#include "VertexBuffer.hpp"
 #include "ResourceManager.hpp"
+#include "Entity.hpp"
 
 #define SCREEN_WIDTH 1280 /**<width of the window */ 
 #define SCREEN_HEIGHT 720 /**<height of the window */ 
 
 static sf::Clock deltaTime; /**<timer that tracks time since last iteration of game loop*/
 
-void GameLoop(bool running, Camera* camera, VertexBuffer* vbuff, VertexBuffer* cbuff, GLuint pid);
+/*
+* @brief Game loop that handles what happens every frame
+*/
+void GameLoop(bool running, Camera* camera, Entity* ent);
 
 /**
 * Main application.
@@ -28,34 +31,32 @@ void GameLoop(bool running, Camera* camera, VertexBuffer* vbuff, VertexBuffer* c
 int main(int argc, char *argv[])
 {
 	GLuint game;
-	GLuint vao;	
+	GLuint vao;
 
 	ResourceManager* resourceManager;
 	Camera* camera;
+	Entity* entity;
 
 	game = GameInit();
 
 	resourceManager = &ResourceManager::getResourceManager();
+
+	entity = new Entity(resourceManager->getVertexBufferArray()->at(0),
+						resourceManager->getVertexBufferArray()->at(1),
+						glm::vec3(0.0f, 0.0f, 0.0f)
+	);
 
 	camera = new Camera(SCREEN_WIDTH, SCREEN_HEIGHT, glm::vec3(0.0f, 0.0f, 100.0f));
 
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 
-	GameLoop(game, 
-			camera, 
-			resourceManager->getVertexBufferArray()->at(0), 
-			resourceManager->getVertexBufferArray()->at(1), 
-			resourceManager->getShaderArray()->at(0)->getProgram()
-	);
+	GameLoop(game, camera, entity);
 
 	return 0;
 }
 
-/*
-* @brief Game loop that handles what happens every frame
-*/
-void GameLoop(bool running, Camera* camera, VertexBuffer* vbuff, VertexBuffer* cbuff, GLuint pid)
+void GameLoop(bool running, Camera* camera, Entity* ent)
 {
 	getClock().restart();
 	deltaTime.restart();
@@ -73,24 +74,26 @@ void GameLoop(bool running, Camera* camera, VertexBuffer* vbuff, VertexBuffer* c
 		glm::mat4 View = camera->getViewMatrix();
 		glm::mat4 Model = glm::mat4(1.0f);
 
-		GLuint PmatrixID = glGetUniformLocation(pid, "Projection");
+		GLuint PmatrixID = glGetUniformLocation(ent->getVertexBuffer()->getShader()->getProgram(), "Projection");
 		glUniformMatrix4fv(PmatrixID, 1, GL_FALSE, &Projection[0][0]);		
 
-		GLuint VmatrixID = glGetUniformLocation(pid, "View");
+		GLuint VmatrixID = glGetUniformLocation(ent->getVertexBuffer()->getShader()->getProgram(), "View");
 		glUniformMatrix4fv(VmatrixID, 1, GL_FALSE, &View[0][0]);		
 
-		GLuint MmatrixID = glGetUniformLocation(pid, "Model");
+		GLuint MmatrixID = glGetUniformLocation(ent->getVertexBuffer()->getShader()->getProgram(), "Model");
 		glUniformMatrix4fv(MmatrixID, 1, GL_FALSE, &Model[0][0]);
 
+		glUseProgram(ent->getVertexBuffer()->getShader()->getProgram());
+
 		// 1st attribute buffer : vertices
-		vbuff->configureVertexAttributes(0);
+		ent->getVertexBuffer()->configureVertexAttributes();
 
 		// 2nd attribute buffer : colors
-		cbuff->configureVertexAttributes(1);
+		ent->getColorBuffer()->configureVertexAttributes();
 
 		//Draw Arrays
-		vbuff->renderVertexBuffer();
-		cbuff->renderVertexBuffer();
+		ent->getVertexBuffer()->renderVertexBuffer();
+		ent->getColorBuffer()->renderVertexBuffer();
 
 		getWindow()->display();
 
