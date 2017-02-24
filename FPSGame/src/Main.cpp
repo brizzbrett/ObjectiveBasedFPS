@@ -10,6 +10,7 @@
 #include "Camera.hpp"
 #include "ResourceManager.hpp"
 #include "Entity.hpp"
+#include "BSPTree.hpp"
 
 #define SCREEN_WIDTH 1280 /**<width of the window */ 
 #define SCREEN_HEIGHT 720 /**<height of the window */ 
@@ -52,6 +53,7 @@ int main(int argc, char *argv[])
 	glBindVertexArray(vao);
 
 	GameLoop(game, camera, entity);
+
 
 	return 0;
 }
