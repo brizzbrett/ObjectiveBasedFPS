@@ -8,27 +8,27 @@ AABB::~AABB()
 {
 }
 
-void AABB::Set(const glm::vec3 &Min, const glm::vec3 &Max)
+void AABB::Set(const glm::vec3 &min, const glm::vec3 &max)
 {
-	Vertices[0] = glm::vec3(Min.x, Min.y, Min.z);
-	Vertices[1] = glm::vec3(Max.x, Min.y, Min.z);
-	Vertices[2] = glm::vec3(Min.x, Max.y, Min.z);
-	Vertices[3] = glm::vec3(Max.x, Max.y, Min.z);
-	Vertices[4] = glm::vec3(Min.x, Min.y, Max.z);
-	Vertices[5] = glm::vec3(Max.x, Min.y, Max.z);
-	Vertices[6] = glm::vec3(Min.x, Max.y, Max.z);
-	Vertices[7] = glm::vec3(Max.x, Max.y, Max.z);
+	vertices[0] = glm::vec3(min.x, min.y, min.z);
+	vertices[1] = glm::vec3(max.x, min.y, min.z);
+	vertices[2] = glm::vec3(min.x, max.y, min.z);
+	vertices[3] = glm::vec3(max.x, max.y, min.z);
+	vertices[4] = glm::vec3(min.x, min.y, max.z);
+	vertices[5] = glm::vec3(max.x, min.y, max.z);
+	vertices[6] = glm::vec3(min.x, max.y, max.z);
+	vertices[7] = glm::vec3(max.x, max.y, max.z);
 }
 
 bool AABB::PointInside(const glm::vec3 &Point)
 {
-	if (Point.x < Vertices[0].x) return false;
-	if (Point.y < Vertices[0].y) return false;
-	if (Point.z < Vertices[0].z) return false;
+	if (Point.x < vertices[0].x) return false;
+	if (Point.y < vertices[0].y) return false;
+	if (Point.z < vertices[0].z) return false;
 
-	if (Point.x > Vertices[7].x) return false;
-	if (Point.y > Vertices[7].y) return false;
-	if (Point.z > Vertices[7].z) return false;
+	if (Point.x > vertices[7].x) return false;
+	if (Point.y > vertices[7].y) return false;
+	if (Point.z > vertices[7].z) return false;
 
 	return true;
 }
@@ -37,20 +37,20 @@ void AABB::Render()
 {
 	glBegin(GL_LINES);
 
-	glVertex3fv(&Vertices[0][0]); glVertex3fv(&Vertices[1][0]);
-	glVertex3fv(&Vertices[2][0]); glVertex3fv(&Vertices[3][0]);
-	glVertex3fv(&Vertices[4][0]); glVertex3fv(&Vertices[5][0]);
-	glVertex3fv(&Vertices[6][0]); glVertex3fv(&Vertices[7][0]);
+	glVertex3fv(&vertices[0][0]); glVertex3fv(&vertices[1][0]);
+	glVertex3fv(&vertices[2][0]); glVertex3fv(&vertices[3][0]);
+	glVertex3fv(&vertices[4][0]); glVertex3fv(&vertices[5][0]);
+	glVertex3fv(&vertices[6][0]); glVertex3fv(&vertices[7][0]);
 
-	glVertex3fv(&Vertices[0][0]); glVertex3fv(&Vertices[2][0]);
-	glVertex3fv(&Vertices[1][0]); glVertex3fv(&Vertices[3][0]);
-	glVertex3fv(&Vertices[4][0]); glVertex3fv(&Vertices[6][0]);
-	glVertex3fv(&Vertices[5][0]); glVertex3fv(&Vertices[7][0]);
+	glVertex3fv(&vertices[0][0]); glVertex3fv(&vertices[2][0]);
+	glVertex3fv(&vertices[1][0]); glVertex3fv(&vertices[3][0]);
+	glVertex3fv(&vertices[4][0]); glVertex3fv(&vertices[6][0]);
+	glVertex3fv(&vertices[5][0]); glVertex3fv(&vertices[7][0]);
 
-	glVertex3fv(&Vertices[0][0]); glVertex3fv(&Vertices[4][0]);
-	glVertex3fv(&Vertices[1][0]); glVertex3fv(&Vertices[5][0]);
-	glVertex3fv(&Vertices[2][0]); glVertex3fv(&Vertices[6][0]);
-	glVertex3fv(&Vertices[3][0]); glVertex3fv(&Vertices[7][0]);
+	glVertex3fv(&vertices[0][0]); glVertex3fv(&vertices[4][0]);
+	glVertex3fv(&vertices[1][0]); glVertex3fv(&vertices[5][0]);
+	glVertex3fv(&vertices[2][0]); glVertex3fv(&vertices[6][0]);
+	glVertex3fv(&vertices[3][0]); glVertex3fv(&vertices[7][0]);
 
 	glEnd();
 }

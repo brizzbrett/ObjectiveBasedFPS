@@ -2,46 +2,47 @@
 #ifndef BSPNODE_H
 #define BSPNODE_H
 
+#include "VertexBuffer.hpp"
 #include "AABB.hpp"
 
 class BSPNode
 {
 private:
 
-	glm::vec3 Min, Max;
+	glm::vec3 min, max; /**<aabb */
 
-	int Depth;
+	int depth; /**<aabb */
 
-	AABB aabb;
+	AABB aabb; /**<aabb */
+	
+	bool visible; /**<aabb */
 
-	bool Visible;
-	float Distance;
+	int *indices; /**<pointer to each index */
 
-	int *Indices;
+	int indicesCount; /**<number of indices */
 
-	int IndicesCount;
-
+	VertexBuffer* indexbuffer; /**<vertex buffer for each node */
 	GLuint IndexBufferObject;
 
-	BSPNode *Children[2];
-
-	void SetDefaults();
+	BSPNode *left; /**<the left child node */
+	BSPNode *right; /**<the right child node */
 
 public:
 
-	void InitAABB(const glm::vec3 &Min, const glm::vec3 &Max, int Depth, float MinAABBSize);
-	bool CheckTriangle(glm::vec3* Vertices, int *Indices, int A, int B, int C);
-	void AllocateMemory();
-	bool AddTriangle(glm::vec3* Vertices, int *Indices, int A, int B, int C);
-	void ResetAABB(glm::vec3* Vertices);
-	int InitIndexBufferObject();
-	float GetDistance();
-	void Render();
-	void RenderAABB(int Depth);
-	void Destroy();
-
 	BSPNode();
 	~BSPNode();
+
+	void InitAABB(const glm::vec3 &min, const glm::vec3 &max, int depth, float minAABBSize);
+	bool CheckTriangle(Vertex* vertices, int *indices, int A, int B, int C);
+	void AllocateMemory();
+	bool AddTriangle(Vertex* vertices, int *indices, int A, int B, int C);
+	void ResetAABB(Vertex* vertices);
+	int InitIndexBufferObject();
+	void Render();
+	void RenderAABB(int depth);
+	void Destroy();
+
+
 
 };
 

@@ -10,7 +10,7 @@
 #include "Camera.hpp"
 #include "ResourceManager.hpp"
 #include "Entity.hpp"
-#include "BSPTree.hpp"
+#include "Terrain.hpp"
 
 #define SCREEN_WIDTH 1280 /**<width of the window */ 
 #define SCREEN_HEIGHT 720 /**<height of the window */ 
@@ -20,7 +20,7 @@ static sf::Clock deltaTime; /**<timer that tracks time since last iteration of g
 /*
 * @brief Game loop that handles what happens every frame
 */
-void GameLoop(bool running, Camera* camera, Entity* ent);
+void GameLoop(bool running, Camera* camera, Entity* ent, Terrain* terr);
 
 /**
 * Main application.
@@ -38,6 +38,10 @@ int main(int argc, char *argv[])
 	Camera* camera;
 	Entity* entity;
 
+	Terrain* terrain;
+
+
+
 	game = GameInit();
 
 	resourceManager = &ResourceManager::getResourceManager();
@@ -49,16 +53,20 @@ int main(int argc, char *argv[])
 
 	camera = new Camera(SCREEN_WIDTH, SCREEN_HEIGHT, glm::vec3(0.0f, 0.0f, 100.0f));
 
+	terrain = new Terrain();
+
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 
-	GameLoop(game, camera, entity);
+	terrain->LoadTexture2D("terrain.jpg");
+
+	GameLoop(game, camera, entity, terrain);
 
 
 	return 0;
 }
 
-void GameLoop(bool running, Camera* camera, Entity* ent)
+void GameLoop(bool running, Camera* camera, Entity* ent, Terrain* terr)
 {
 	getClock().restart();
 	deltaTime.restart();
@@ -92,6 +100,8 @@ void GameLoop(bool running, Camera* camera, Entity* ent)
 
 		// 2nd attribute buffer : colors
 		ent->getColorBuffer()->configureVertexAttributes();
+
+		terr->Render();
 
 		//Draw Arrays
 		ent->getVertexBuffer()->renderVertexBuffer();

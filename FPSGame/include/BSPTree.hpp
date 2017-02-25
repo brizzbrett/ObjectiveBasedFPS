@@ -1,27 +1,28 @@
 #pragma once
+#ifndef BSPTREE_H
+#define BSPTREE_H
 
 #include "BSPNode.hpp"
 
 class BSPTree
 {
 private:
-	BSPNode *Root;
+	BSPNode *root; /**<the root node of the tree */
 
-private:
-	BSPNode **VisibleGeometryNodes;
-	int VisibleGeometryNodesCount;
+	BSPNode **geometryNodes; /**<array of nodes that hold geometry */
+	int geometryNodesCount; /**<number of nodes that hold geometry */
 
-public:
+public:	
+	
 	BSPTree();
 	~BSPTree();
 
-private:
-	void SetDefaults();
-
-public:
-	void Init(glm::vec3* Vertices, int *Indices, int IndicesCount, const glm::vec3 &Min, const glm::vec3 &Max, float MinAABBSize = 16.0f);
-	void QuickSortVisibleGeometryNodes(int Left, int Right);
-	void Render(bool VisualizeRenderingOrder);
-	void RenderAABB(int Depth);
+	void Init(Vertex* vertices, int *indices, int indicesCount, const glm::vec3 &min, const glm::vec3 &max, float minAABBSize = 16.0f);
+	void Render();
+	void RenderAABB(int depth);	
 	void Destroy();
+	
+
 };
+
+#endif

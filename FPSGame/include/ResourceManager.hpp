@@ -6,6 +6,7 @@
 #include <vector>
 #include "Shader.hpp"
 #include "VertexBuffer.hpp"
+#include "Terrain.hpp"
 
 class ResourceManager
 {

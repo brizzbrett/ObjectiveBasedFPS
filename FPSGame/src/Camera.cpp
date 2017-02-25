@@ -49,7 +49,7 @@ void Camera::HandleMouseMove(int mouseX, int mouseY, double deltaTime)
 	horizMovement += yawSensitivity * deltaTime * float(SCREEN_WIDTH / 2 - mouseX);
 	vertMovement += pitchSensitivity * deltaTime * float(SCREEN_HEIGHT/ 2 - mouseY);
 
-	std::cout << "Mid window values: " << windowMidPoint.x << "\t" << windowMidPoint.y << std::endl;
+	std::cout << "mid window values: " << windowMidPoint.x << "\t" << windowMidPoint.y << std::endl;
 	std::cout << "Mouse values     : " << mouseX << "\t" << mouseY << std::endl;
 	std::cout << "Horizontal Angle: " << horizMovement << "\t Vertical Angle:" << vertMovement << std::endl << std::endl;
 	std::cout << "Camera position: " << position.x << "," << position.y << "," << position.z;

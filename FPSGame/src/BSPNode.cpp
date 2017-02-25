@@ -2,82 +2,77 @@
 
 BSPNode::BSPNode()
 {
-	SetDefaults();
+	min = max = glm::vec3(0.0f);
+
+	depth = 0;
+
+	indices = NULL;
+
+	indicesCount = 0;
+
+	indexbuffer = 0;
+
+	left = NULL;
+	right = NULL;
 }
 
 BSPNode::~BSPNode()
 {
 }
 
-void BSPNode::SetDefaults()
+void BSPNode::InitAABB(const glm::vec3 &min, const glm::vec3 &max, int depth, float minAABBSize)
 {
-	Min = Max = glm::vec3(0.0f);
+	this->min = min;
+	this->max = max;
 
-	Depth = 0;
+	this->depth = depth;
 
-	Indices = NULL;
+	glm::vec3 mid = (min + max) / 2.0f;
+	glm::vec3 size = max - min;
 
-	IndicesCount = 0;
+	aabb.Set(min, max);
 
-	IndexBufferObject = 0;
-
-	Children[0] = NULL;
-	Children[1] = NULL;
-}
-
-void BSPNode::InitAABB(const glm::vec3 &Min, const glm::vec3 &Max, int Depth, float MinAABBSize)
-{
-	this->Min = Min;
-	this->Max = Max;
-
-	this->Depth = Depth;
-
-	glm::vec3 Mid = (Min + Max) / 2.0f;
-	glm::vec3 Size = Max - Min;
-
-	aabb.Set(Min, Max);
-
-	if (Size.x > MinAABBSize || Size.z > MinAABBSize)
+	if (size.x > minAABBSize || size.z > minAABBSize)
 	{
-		Children[0] = new BSPNode();
-		Children[1] = new BSPNode();
+		left = new BSPNode();
+		right = new BSPNode();
 
-		if (Size.x >= Size.z)
+		if (size.x >= size.z)
 		{
-			Children[0]->InitAABB(glm::vec3(Min.x, Min.y, Min.z), glm::vec3(Mid.x, Max.y, Max.z), Depth + 1, MinAABBSize);
-			Children[1]->InitAABB(glm::vec3(Mid.x, Min.y, Min.z), glm::vec3(Max.x, Max.y, Max.z), Depth + 1, MinAABBSize);
+			left->InitAABB(glm::vec3(min.x, min.y, min.z), glm::vec3(mid.x, max.y, max.z), depth + 1, minAABBSize);
+			right->InitAABB(glm::vec3(mid.x, min.y, min.z), glm::vec3(max.x, max.y, max.z), depth + 1, minAABBSize);
 		}
 		else
 		{
-			Children[0]->InitAABB(glm::vec3(Min.x, Min.y, Min.z), glm::vec3(Max.x, Max.y, Mid.z), Depth + 1, MinAABBSize);
-			Children[1]->InitAABB(glm::vec3(Min.x, Min.y, Mid.z), glm::vec3(Max.x, Max.y, Max.z), Depth + 1, MinAABBSize);
+			left->InitAABB(glm::vec3(min.x, min.y, min.z), glm::vec3(max.x, max.y, mid.z), depth + 1, minAABBSize);
+			right->InitAABB(glm::vec3(min.x, min.y, mid.z), glm::vec3(max.x, max.y, max.z), depth + 1, minAABBSize);
 		}
 	}
 }
 
-bool BSPNode::CheckTriangle(glm::vec3* Vertices, int *Indices, int A, int B, int C)
+bool BSPNode::CheckTriangle(Vertex* vertices, int *indices, int A, int B, int C)
 {
-	if (aabb.PointInside(Vertices[Indices[A]]))
+	if (aabb.PointInside(vertices[indices[A]].position))
 	{
-		if (aabb.PointInside(Vertices[Indices[B]]))
+		if (aabb.PointInside(vertices[indices[B]].position))
 		{
-			if (aabb.PointInside(Vertices[Indices[C]]))
+			if (aabb.PointInside(vertices[indices[C]].position))
 			{
-				bool BelongsToAChild = false;
+				bool childHasVerts = false;
 
-				if (Children[0] != NULL)
+				if (left != NULL)
 				{
-					BelongsToAChild |= Children[0]->CheckTriangle(Vertices, Indices, A, B, C);
+					childHasVerts |= left->CheckTriangle(vertices, indices, A, B, C);
 				}
 
-				if (Children[1] != NULL && !BelongsToAChild)
+				if (right != NULL && !childHasVerts)
 				{
-					BelongsToAChild |= Children[1]->CheckTriangle(Vertices, Indices, A, B, C);
+					childHasVerts |= right->CheckTriangle(vertices, indices, A, B, C);
 				}
 
-				if (!BelongsToAChild)
+				if (!childHasVerts)
 				{
-					IndicesCount += 3;
+					indicesCount += 3;
 				}
 
 				return true;
@@ -90,48 +85,48 @@ bool BSPNode::CheckTriangle(glm::vec3* Vertices, int *Indices, int A, int B, int
 
 void BSPNode::AllocateMemory()
 {
-	if (IndicesCount > 0)
+	if (indicesCount > 0)
 	{
-		Indices = new int[IndicesCount];
-		IndicesCount = 0;
+		indices = new int[indicesCount];
+		indicesCount = 0;
 	}
 
-	if (Children[0] != NULL)
+	if (left != NULL)
 	{
-		Children[0]->AllocateMemory();
+		left->AllocateMemory();
 	}
 
-	if (Children[1] != NULL)
+	if (right != NULL)
 	{
-		Children[1]->AllocateMemory();
+		right->AllocateMemory();
 	}
 }
 
-bool BSPNode::AddTriangle(glm::vec3* Vertices, int *Indices, int A, int B, int C)
+bool BSPNode::AddTriangle(Vertex* vertices, int *indices, int A, int B, int C)
 {
-	if (aabb.PointInside(Vertices[Indices[A]]))
+	if (aabb.PointInside(vertices[indices[A]].position))
 	{
-		if (aabb.PointInside(Vertices[Indices[B]]))
+		if (aabb.PointInside(vertices[indices[B]].position))
 		{
-			if (aabb.PointInside(Vertices[Indices[C]]))
+			if (aabb.PointInside(vertices[indices[C]].position))
 			{
-				bool BelongsToAChild = false;
+				bool childHasVerts = false;
 
-				if (Children[0] != NULL)
+				if (left != NULL)
 				{
-					BelongsToAChild |= Children[0]->AddTriangle(Vertices, Indices, A, B, C);
+					childHasVerts |= left->AddTriangle(vertices, indices, A, B, C);
 				}
 
-				if (Children[1] != NULL && !BelongsToAChild)
+				if (right != NULL && !childHasVerts)
 				{
-					BelongsToAChild |= Children[1]->AddTriangle(Vertices, Indices, A, B, C);
+					childHasVerts |= right->AddTriangle(vertices, indices, A, B, C);
 				}
 
-				if (!BelongsToAChild)
+				if (!childHasVerts)
 				{
-					this->Indices[IndicesCount++] = Indices[A];
-					this->Indices[IndicesCount++] = Indices[B];
-					this->Indices[IndicesCount++] = Indices[C];
+					this->indices[indicesCount++] = indices[A];
+					this->indices[indicesCount++] = indices[B];
+					this->indices[indicesCount++] = indices[C];
 				}
 
 				return true;
@@ -142,161 +137,134 @@ bool BSPNode::AddTriangle(glm::vec3* Vertices, int *Indices, int A, int B, int C
 	return false;
 }
 
-void BSPNode::ResetAABB(glm::vec3* Vertices)
+void BSPNode::ResetAABB(Vertex* vertices)
 {
-	float MinY = Min.y, MaxY = Max.y;
+	float minY = min.y, maxY = max.y;
 
-	Min.y = MaxY;
-	Max.y = MinY;
+	min.y = maxY;
+	max.y = minY;
 
-	if (IndicesCount > 0)
+	if (indicesCount > 0)
 	{
-		for (int i = 0; i < IndicesCount; i++)
+		for (int i = 0; i < indicesCount; i++)
 		{
-			if (Vertices[Indices[i]].y < Min.y) Min.y = Vertices[Indices[i]].y;
-			if (Vertices[Indices[i]].y > Max.y) Max.y = Vertices[Indices[i]].y;
+			if (vertices[indices[i]].position.y < min.y) min.y = vertices[indices[i]].position.y;
+			if (vertices[indices[i]].position.y > max.y) max.y = vertices[indices[i]].position.y;
 		}
 	}
 
-	if (Children[0] != NULL)
+	if (left != NULL)
 	{
-		Children[0]->ResetAABB(Vertices);
+		left->ResetAABB(vertices);
 
-		if (Children[0]->Min.y < Min.y) Min.y = Children[0]->Min.y;
-		if (Children[0]->Max.y > Max.y) Max.y = Children[0]->Max.y;
+		if (left->min.y < min.y) min.y = left->min.y;
+		if (left->max.y > max.y) max.y = left->max.y;
 	}
 
-	if (Children[1] != NULL)
+	if (right != NULL)
 	{
-		Children[1]->ResetAABB(Vertices);
+		right->ResetAABB(vertices);
 
-		if (Children[1]->Min.y < Min.y) Min.y = Children[1]->Min.y;
-		if (Children[1]->Max.y > Max.y) Max.y = Children[1]->Max.y;
+		if (right->min.y < min.y) min.y = right->min.y;
+		if (right->max.y > max.y) max.y = right->max.y;
 	}
 
-	aabb.Set(Min, Max);
+	aabb.Set(min, max);
 }
 
 int BSPNode::InitIndexBufferObject()
 {
-	int GeometryNodesCount = 0;
+	int nodesCount = 0;
 
-	if (IndicesCount > 0)
+	if (indicesCount > 0)
 	{
 		glGenBuffers(1, &IndexBufferObject);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBufferObject);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, IndicesCount * sizeof(int), Indices, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesCount * sizeof(int), indices, GL_STATIC_DRAW);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-		delete[] Indices;
-		Indices = NULL;
+		//indexbuffer = new VertexBuffer(indices, indicesCount, GL_TRIANGLES, indicesCount, 0, NULL);
 
-		GeometryNodesCount++;
+		delete[] indices;
+		indices = NULL;
+
+		nodesCount++;
 	}
 
-	if (Children[0] != NULL)
+	if (left != NULL)
 	{
-		GeometryNodesCount += Children[0]->InitIndexBufferObject();
+		nodesCount += left->InitIndexBufferObject();
 	}
 
-	if (Children[1] != NULL)
+	if (right != NULL)
 	{
-		GeometryNodesCount += Children[1]->InitIndexBufferObject();
+		nodesCount += right->InitIndexBufferObject();
 	}
 
-	return GeometryNodesCount;
-}
-
-/*int BSPNode::CheckVisibility(CFrustum &Frustum, BSPNode **VisibleGeometryNodes, int &VisibleGeometryNodesCount)
-{
-	int TrianglesRendered = 0;
-
-	Visible = aabb.Visible(Frustum);
-
-	if (Visible)
-	{
-		if (IndicesCount > 0)
-		{
-			Distance = aabb.Distance(Frustum);
-
-			VisibleGeometryNodes[VisibleGeometryNodesCount++] = this;
-
-			TrianglesRendered += IndicesCount / 3;
-		}
-
-		if (Children[0] != NULL)
-		{
-			TrianglesRendered += Children[0]->CheckVisibility(Frustum, VisibleGeometryNodes, VisibleGeometryNodesCount);
-		}
-
-		if (Children[1] != NULL)
-		{
-			TrianglesRendered += Children[1]->CheckVisibility(Frustum, VisibleGeometryNodes, VisibleGeometryNodesCount);
-		}
-	}
-
-	return TrianglesRendered;
-}*/
-
-float BSPNode::GetDistance()
-{
-	return Distance;
+	return nodesCount;
 }
 
 void BSPNode::Render()
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBufferObject);
 
-	glDrawElements(GL_TRIANGLES, IndicesCount, GL_UNSIGNED_INT, NULL);
+	glDrawElements(GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, NULL);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	/*indexbuffer->renderIndexBuffer();
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);*/
 }
 
-void BSPNode::RenderAABB(int Depth)
+void BSPNode::RenderAABB(int depth)
 {
-	if (Visible)
+	if (visible)
 	{
-		if (Depth == -1 || Depth == this->Depth)
+		if (depth == -1 || depth == this->depth)
 		{
 			aabb.Render();
 		}
 
-		if (Children[0] != NULL)
+		if (left != NULL)
 		{
-			Children[0]->RenderAABB(Depth);
+			left->RenderAABB(depth);
 		}
 
-		if (Children[1] != NULL)
+		if (right != NULL)
 		{
-			Children[1]->RenderAABB(Depth);
+			right->RenderAABB(depth);
 		}
 	}
 }
-
 void BSPNode::Destroy()
 {
-	if (Indices != NULL)
+	if (indices != NULL)
 	{
-		delete[] Indices;
+		delete[] indices;
 	}
 
-	if (IndexBufferObject != 0)
+	if (left != NULL)
 	{
-		glDeleteBuffers(1, &IndexBufferObject);
+		left->Destroy();
+		delete left;
 	}
 
-	if (Children[0] != NULL)
+	if (right != NULL)
 	{
-		Children[0]->Destroy();
-		delete Children[0];
+		right->Destroy();
+		delete right;
 	}
 
-	if (Children[1] != NULL)
-	{
-		Children[1]->Destroy();
-		delete Children[1];
-	}
+	min = max = glm::vec3(0.0f);
 
-	SetDefaults();
+	depth = 0;
+
+	indices = NULL;
+
+	indicesCount = 0;
+
+	indexbuffer = 0;
+
+	left = NULL;
+	right = NULL;
 }

@@ -2,152 +2,78 @@
 
 BSPTree::BSPTree()
 {
-	SetDefaults();
+	root = NULL;
+
+	geometryNodes = NULL;
 }
 
 BSPTree::~BSPTree()
 {
 }
 
-void BSPTree::SetDefaults()
-{
-	Root = NULL;
-
-	VisibleGeometryNodes = NULL;
-}
-
-void BSPTree::Init(glm::vec3* Vertices, int *Indices, int IndicesCount, const glm::vec3 &Min, const glm::vec3 &Max, float MinAABBSize)
+void BSPTree::Init(Vertex* vertices, int *indices, int indicesCount, const glm::vec3 &min, const glm::vec3 &max, float minAABBSize)
 {
 	Destroy();
 
-	if (Vertices != NULL && Indices != NULL && IndicesCount > 0)
+	if (vertices != NULL && indices != NULL && indicesCount > 0)
 	{
-		Root = new BSPNode();
+		root = new BSPNode();
 
-		Root->InitAABB(Min, Max, 0, MinAABBSize);
+		root->InitAABB(min, max, 0, minAABBSize);
 
-		for (int i = 0; i < IndicesCount; i += 3)
+		for (int i = 0; i < indicesCount; i += 3)
 		{
-			Root->CheckTriangle(Vertices, Indices, i, i + 1, i + 2);
+			root->CheckTriangle(vertices, indices, i, i + 1, i + 2);
 		}
 
-		Root->AllocateMemory();
+		root->AllocateMemory();
 
-		for (int i = 0; i < IndicesCount; i += 3)
+		for (int i = 0; i < indicesCount; i += 3)
 		{
-			Root->AddTriangle(Vertices, Indices, i, i + 1, i + 2);
+			root->AddTriangle(vertices, indices, i, i + 1, i + 2);
 		}
 
-		Root->ResetAABB(Vertices);
+		root->ResetAABB(vertices);
 
-		int GeometryNodesCount = Root->InitIndexBufferObject();
+		int nodesCount = root->InitIndexBufferObject();
 
-		VisibleGeometryNodes = new BSPNode*[GeometryNodesCount];
+		geometryNodes = new BSPNode*[nodesCount];
 	}
 }
 
-void BSPTree::QuickSortVisibleGeometryNodes(int Left, int Right)
+void BSPTree::Render()
 {
-	float Pivot = VisibleGeometryNodes[(Left + Right) / 2]->GetDistance();
-	int i = Left, j = Right;
-
-	while (i <= j)
+	if (geometryNodesCount > 0)
 	{
-		while (VisibleGeometryNodes[i]->GetDistance() < Pivot) i++;
-		while (VisibleGeometryNodes[j]->GetDistance() > Pivot) j--;
-
-		if (i <= j)
+		for (int i = 0; i < geometryNodesCount; i++)
 		{
-			if (i != j)
-			{
-				BSPNode *Temp = VisibleGeometryNodes[i];
-				VisibleGeometryNodes[i] = VisibleGeometryNodes[j];
-				VisibleGeometryNodes[j] = Temp;
-			}
-
-			i++;
-			j--;
-		}
-	}
-
-	if (Left < j)
-	{
-		QuickSortVisibleGeometryNodes(Left, j);
-	}
-
-	if (i < Right)
-	{
-		QuickSortVisibleGeometryNodes(i, Right);
-	}
-}
-
-/*int BSPTree::CheckVisibility(CFrustum &Frustum, bool SortVisibleGeometryNodes)
-{
-	int TrianglesRendered = 0;
-
-	VisibleGeometryNodesCount = 0;
-
-	if (Root != NULL)
-	{
-		TrianglesRendered = Root->CheckVisibility(Frustum, VisibleGeometryNodes, VisibleGeometryNodesCount);
-
-		if (SortVisibleGeometryNodes)
-		{
-			if (VisibleGeometryNodesCount > 1)
-			{
-				QuickSortVisibleGeometryNodes(0, VisibleGeometryNodesCount - 1);
-			}
-		}
-	}
-
-	return TrianglesRendered;
-}*/
-
-void BSPTree::Render(bool VisualizeRenderingOrder)
-{
-	if (VisibleGeometryNodesCount > 0)
-	{
-		if (!VisualizeRenderingOrder)
-		{
-			for (int i = 0; i < VisibleGeometryNodesCount; i++)
-			{
-				VisibleGeometryNodes[i]->Render();
-			}
-		}
-		else
-		{
-			for (int i = 0; i < VisibleGeometryNodesCount; i++)
-			{
-				float Color = (float)(i + 1) / (float)VisibleGeometryNodesCount;
-
-				glColor3f(Color, Color, Color);
-
-				VisibleGeometryNodes[i]->Render();
-			}
+			geometryNodes[i]->Render();
 		}
 	}
 }
 
-void BSPTree::RenderAABB(int Depth)
+void BSPTree::RenderAABB(int depth)
 {
-	if (Root != NULL)
+	if (root != NULL)
 	{
-		Root->RenderAABB(Depth);
+		root->RenderAABB(depth);
 	}
 }
 
 void BSPTree::Destroy()
 {
-	if (Root != NULL)
+	if (root != NULL)
 	{
-		Root->Destroy();
-		delete Root;
+		root->Destroy();
+		delete root;
 	}
 
-	if (VisibleGeometryNodes != NULL)
+	if (geometryNodes != NULL)
 	{
-		delete[] VisibleGeometryNodes;
+		delete[] geometryNodes;
 	}
 
-	SetDefaults();
+	root = NULL;
+
+	geometryNodes = NULL;
 }

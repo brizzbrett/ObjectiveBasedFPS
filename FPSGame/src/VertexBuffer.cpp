@@ -27,3 +27,9 @@ void VertexBuffer::renderVertexBuffer()
 {
 	glDrawArrays(mode, 0, count);
 }
+void VertexBuffer::renderIndexBuffer()
+{
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexBufferID);
+
+	glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, NULL);
+}

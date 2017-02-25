@@ -45,6 +45,7 @@ public:
 
 	void configureVertexAttributes();
 	void renderVertexBuffer();
+	void renderIndexBuffer();
 };
 
 typedef VertexBuffer ColorBuffer; /**<VertexBuffer and ColorBuffer are interchangeable*/
