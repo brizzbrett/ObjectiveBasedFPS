@@ -33,9 +33,6 @@
     <ClCompile Include="src\ResourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\VertexBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -54,6 +51,12 @@
     <ClCompile Include="src\TerrainTexturer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Frustum.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Plane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp">
@@ -69,9 +72,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\ResourceManager.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\VertexBuffer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Entity.hpp">
@@ -95,5 +95,9 @@
     <ClInclude Include="include\TerrainTexturer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\fs1.glsl" />
+    <None Include="shaders\vs1.glsl" />
   </ItemGroup>
 </Project>

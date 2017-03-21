@@ -17,11 +17,6 @@
 
 static sf::Clock deltaTime; /**<timer that tracks time since last iteration of game loop*/
 
-/*
-* @brief Game loop that handles what happens every frame
-*/
-void GameLoop(bool running, Camera* camera, Entity* ent, Terrain* terr);
-
 /**
 * Main application.
 *
@@ -32,87 +27,36 @@ void GameLoop(bool running, Camera* camera, Entity* ent, Terrain* terr);
 int main(int argc, char *argv[])
 {
 	GLuint game;
-	GLuint vao;
-
 	ResourceManager* resourceManager;
-	Camera* camera;
-	Entity* entity;
-
-	Terrain* terrain;
-
-
 
 	game = GameInit();
 
 	resourceManager = &ResourceManager::getResourceManager();
 
-	entity = new Entity(resourceManager->getVertexBufferArray()->at(0),
-						resourceManager->getVertexBufferArray()->at(1),
-						glm::vec3(0.0f, 0.0f, 0.0f)
-	);
+	resourceManager->camera.SetPerspective(90.0f, (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.125f, 1024.0f);
 
-	camera = new Camera(SCREEN_WIDTH, SCREEN_HEIGHT, glm::vec3(0.0f, 0.0f, 100.0f));
+	float height = resourceManager->getTerrainList()->at(0).GetHeight(0.0f, 0.0f);
+	float offset = 1.75f;
 
-	terrain = new Terrain();
+	resourceManager->camera.Look(glm::vec3(0.0f, height + offset, 0.0f), glm::vec3(0.0f, height + offset, -1.0f));
 
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-
-	terrain->LoadTexture2D("terrain.jpg");
-
-	GameLoop(game, camera, entity, terrain);
-
-
-	return 0;
-}
-
-void GameLoop(bool running, Camera* camera, Entity* ent, Terrain* terr)
-{
 	getClock().restart();
 	deltaTime.restart();
 
-	while (running)
+	while (game)
 	{
-		getWindow()->clear(sf::Color::Black);
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		camera->HandleMovement(sf::Mouse::getPosition(*getWindow()).x, sf::Mouse::getPosition(*getWindow()).y, deltaTime.getElapsedTime().asSeconds());
+		resourceManager->Update(deltaTime.getElapsedTime().asSeconds());
 		deltaTime.restart();
-
-		glm::mat4 Projection = camera->getProjectionMatrix();
-		glm::mat4 View = camera->getViewMatrix();
-		glm::mat4 Model = glm::mat4(1.0f);
-
-		GLuint PmatrixID = glGetUniformLocation(ent->getVertexBuffer()->getShader()->getProgram(), "Projection");
-		glUniformMatrix4fv(PmatrixID, 1, GL_FALSE, &Projection[0][0]);		
-
-		GLuint VmatrixID = glGetUniformLocation(ent->getVertexBuffer()->getShader()->getProgram(), "View");
-		glUniformMatrix4fv(VmatrixID, 1, GL_FALSE, &View[0][0]);		
-
-		GLuint MmatrixID = glGetUniformLocation(ent->getVertexBuffer()->getShader()->getProgram(), "Model");
-		glUniformMatrix4fv(MmatrixID, 1, GL_FALSE, &Model[0][0]);
-
-		glUseProgram(ent->getVertexBuffer()->getShader()->getProgram());
-
-		// 1st attribute buffer : vertices
-		ent->getVertexBuffer()->configureVertexAttributes();
-
-		// 2nd attribute buffer : colors
-		ent->getColorBuffer()->configureVertexAttributes();
-
-		terr->Render();
-
-		//Draw Arrays
-		ent->getVertexBuffer()->renderVertexBuffer();
-		ent->getColorBuffer()->renderVertexBuffer();
 
 		getWindow()->display();
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 		{
-			running = false;
+			game = false;
 		}
 	}
 	getWindow()->close();
+
+	return 0;
 }

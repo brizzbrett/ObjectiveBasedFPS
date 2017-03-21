@@ -6,6 +6,7 @@
 #include <glew.h>
 #include <glm/glm.hpp>
 #include "Vertex.hpp"
+#include "Camera.hpp"
 
 class AABB
 {
@@ -19,6 +20,10 @@ public:
 
 	void Set(const glm::vec3 &min, const glm::vec3 &max);
 	bool PointInside(const glm::vec3 &Point);
+
+	bool Visible(Frustum &frustum);
+	float Distance(Frustum &frustum);
+
 	void Render();
 
 };

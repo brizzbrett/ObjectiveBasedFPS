@@ -16,13 +16,13 @@ private:
 	AABB aabb; /**<aabb */
 	
 	bool visible; /**<aabb */
+	float distance;
 
 	int *indices; /**<pointer to each index */
 
 	int indicesCount; /**<number of indices */
 
-	VertexBuffer* indexbuffer; /**<vertex buffer for each node */
-	GLuint IndexBufferObject;
+	Shader* shader;
 
 	BSPNode *left; /**<the left child node */
 	BSPNode *right; /**<the right child node */
@@ -31,18 +31,19 @@ public:
 
 	BSPNode();
 	~BSPNode();
-
-	void InitAABB(const glm::vec3 &min, const glm::vec3 &max, int depth, float minAABBSize);
+	GLuint indexbuffer;
+	void Split(const glm::vec3 &min, const glm::vec3 &max, int depth, float minAABBSize);
 	bool CheckTriangle(Vertex* vertices, int *indices, int A, int B, int C);
 	void AllocateMemory();
 	bool AddTriangle(Vertex* vertices, int *indices, int A, int B, int C);
 	void ResetAABB(Vertex* vertices);
 	int InitIndexBufferObject();
+	int CheckVisibility(Frustum &frustum, BSPNode **geometryNodes, int &geometryNodesCount);
 	void Render();
-	void RenderAABB(int depth);
 	void Destroy();
 
 
+	float BSPNode::GetDistance() { return distance; };
 
 };
 

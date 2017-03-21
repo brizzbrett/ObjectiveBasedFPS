@@ -9,8 +9,8 @@ class Terrain
 {
 private:
 
-	int size, sizeP1;
-	float sizeD2;
+	int size;
+	float halfSize;
 
 	glm::vec3 min, max;
 
@@ -22,31 +22,34 @@ private:
 
 public:
 
-	BSPTree BSPTree;
+	BSPTree tree;
 
 	Terrain();
 	~Terrain();
 
-	bool LoadTexture2D(char *FileName, float Scale = 256.0f, float Offset = -128.0f);
-	void Render();
-	void RenderAABB(int depth = -1);
+	int InitTerrain(char* file);
+	int LoadTexture2D(char *FileName, float Scale = 256.0f, float Offset = -128.0f);
+	int CheckVisibility(Frustum &frustum, bool SortVisibleGeometryNodes);
+	glm::vec3 CheckCollision(Camera cam, glm::vec3 movement);
+
+	void Render(Camera cam);
 	void Destroy();
 
 	int GetSize() { return size; };
 	glm::vec3 GetMin() { return min; };
 	glm::vec3 GetMax() { return max; };
-	void GetMinMax(glm::mat4 &ViewMatrix, glm::vec3 &min, glm::vec3 &max);
+	void GetMinMax(glm::mat4 &view, glm::vec3 &min, glm::vec3 &max);
 	int GetTrianglesCount(){ return indicesCount / 3; }
 
-	int GetIndex(int X, int Z) { return sizeP1 * Z + X; };
-	float GetHeight(int X, int Z) { return heights[GetIndex(X < 0 ? 0 : X > size ? size : X, Z < 0 ? 0 : Z > size ? size : Z)]; };
+	int GetIndex(int x, int z) { return ((size+1) * z) + x; };
+	float GetHeight(int x, int z) { return heights[GetIndex(x < 0 ? 0 : x > size ? size : x, z < 0 ? 0 : z > size ? size : z)]; };
 
-	float GetHeight(float X, float Z);	
+	float GetHeight(float x, float z);	
 	
 
 
 private:
-	float GetHeight(float *heights, int size, float X, float Z);
+	float GetHeight(float *heights, int size, float x, float z);
 };
 
 #endif

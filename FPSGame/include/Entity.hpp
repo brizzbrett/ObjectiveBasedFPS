@@ -6,13 +6,14 @@
 #include <glew.h>
 #include <glm/glm.hpp>
 #include "VertexBuffer.hpp"
+#include "Camera.hpp"
 
 class Entity
 {
 protected: 
 
+	Camera* camera; /**<player's camera */
 	VertexBuffer* vertexBuffer; /**<entity's vertex buffer data */
-	ColorBuffer* colorBuffer; /**<entity's color buffer data */
 
 	glm::vec3 position; /**<Entity position */
 	glm::vec3 scale; /**<Entity scale */
@@ -27,17 +28,23 @@ public:
 	VertexBuffer* getVertexBuffer() { return vertexBuffer; };
 
 	/*
-	* @brief Getter: the color buffer
-	* @return colorBuffer
-	*/
-	ColorBuffer* getColorBuffer() { return colorBuffer; };
-
-	/*
 	* @brief Setter: the vertex and color buffers
 	* @param vbuff vertexBuffer's new value
 	* @param cbuff colorBuffer's new value
 	*/
-	void setVertAndColorBuffer(VertexBuffer* vbuff, VertexBuffer* cbuff) { vertexBuffer = vbuff; colorBuffer = cbuff; };
+	void setVertexBuffer(VertexBuffer* vbuff) { vertexBuffer = vbuff; };
+
+	/*
+	* @brief Getter: the camera
+	* @return camera
+	*/
+	Camera* getCamera() { return camera; };
+
+	/*
+	* @brief Setter: the player camera
+	* @param cam camera's new camera
+	*/
+	void setCamera(Camera* cam) { camera = cam; };
 
 	/*
 	* @brief Getter: the position
@@ -78,7 +85,7 @@ public:
 	/*
 	* @brief Entity constructor. Overloaded with 3 arguments.
 	*/
-	Entity(VertexBuffer* vbuff, VertexBuffer* cbuff, glm::vec3 pos);
+	Entity(VertexBuffer* vbuff, glm::vec3 pos);
 
 	/*
 	* @brief Entity destructor.

@@ -1,6 +1,7 @@
 #include "TerrainTexturer.hpp"
+#include "SimpleLogger.hpp"
 
-int gl_max_texture_size = 0, gl_max_texture_max_anisotropy_ext = 0;
+int gl_max_texture_size = 1024, gl_max_texture_max_anisotropy_ext = 1024;
 
 Texture::Texture()
 {
@@ -30,6 +31,7 @@ FIBITMAP *Texture::GetBitmap(char *FileName, int &width, int &height, int &BPP)
 
 	if (fif == FIF_UNKNOWN)
 	{
+		slog("File format not known...");
 		return NULL;
 	}
 
@@ -38,10 +40,12 @@ FIBITMAP *Texture::GetBitmap(char *FileName, int &width, int &height, int &BPP)
 	if (FreeImage_FIFSupportsReading(fif))
 	{
 		dib = FreeImage_Load(fif, FileName);
+		slog("Free image supports this file format...");
 	}
 
 	if (dib != NULL)
 	{
+		slog("dib made it here...");
 		int OriginalWidth = FreeImage_GetWidth(dib);
 		int OriginalHeight = FreeImage_GetHeight(dib);
 
@@ -51,6 +55,7 @@ FIBITMAP *Texture::GetBitmap(char *FileName, int &width, int &height, int &BPP)
 		if (width == 0 || height == 0)
 		{
 			FreeImage_Unload(dib);
+			slog("Could not unload dib");
 			return NULL;
 		}
 
@@ -85,6 +90,7 @@ bool Texture::LoadTexture2D(char *FileName)
 
 	if (dib == NULL)
 	{
+		slog("dib is null...");
 		return false;
 	}
 

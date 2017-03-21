@@ -1,0 +1,145 @@
+/**
+* @file src\main.cpp
+*
+* Implements the main class.
+*/
+#ifndef _DEBUG
+#include <windows.hpp>
+#endif
+#include "game.hpp"
+#include "Camera.hpp"
+#include "ResourceManager.hpp"
+#include "Entity.hpp"
+#include "Terrain.hpp"
+
+#define SCREEN_WIDTH 1280 /**<width of the window */ 
+#define SCREEN_HEIGHT 720 /**<height of the window */ 
+
+static sf::Clock deltaTime; /**<timer that tracks time since last iteration of game loop*/
+
+glm::mat4 rotate2(float angle, const glm::vec3 &u)
+{
+	glm::mat4 Rotate;
+
+	angle = angle / 180.0f * glm::pi<float>();
+
+	glm::vec3 v = glm::normalize(u);
+
+	float c = 1.0f - cos(angle), s = sin(angle);
+
+	Rotate[0][0] = 1.0f + c * (v.x * v.x - 1.0f);
+	Rotate[1][0] = c * v.x * v.y + v.z * s;
+	Rotate[2][0] = c * v.x * v.z - v.y * s;
+	Rotate[0][1] = c * v.x * v.y - v.z * s;
+	Rotate[1][1] = 1.0f + c * (v.y * v.y - 1.0f);
+	Rotate[2][1] = c * v.y * v.z + v.x * s;
+	Rotate[0][2] = c * v.x * v.z + v.y * s;
+	Rotate[1][2] = c * v.y * v.z - v.x * s;
+	Rotate[2][2] = 1.0f + c * (v.z * v.z - 1.0f);
+
+	return Rotate;
+}
+
+glm::mat4 BiasMatrix = glm::mat4(0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f, 0.5f, 0.5f, 0.5f, 1.0f);
+glm::mat4 BiasMatrixInverse = glm::mat4(2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, -1.0f, -1.0f, -1.0f, 1.0f);
+
+/**
+* Main application.
+*
+* @author Brett Aiken
+* @param argc The number of command - line arguments provided.
+* @param argv An array of command - line argument strings.
+*/
+int main(int argc, char *argv[])
+{
+	GLuint game;
+	GLuint program;
+	GLuint ShadowMap, FBO;
+	GLuint ShadowID, LightID;
+
+	ResourceManager* resourceManager;
+
+	int ShadowMapSize = 1024;
+
+	float LightAngle = 22.5f;
+
+	game = GameInit();
+
+	resourceManager = &ResourceManager::getResourceManager();
+
+	program = resourceManager->getShaderList()->at(0)->getProgram();
+
+	/*ShadowID = glGetUniformLocation(program, "Shadow");
+	LightID = glGetUniformLocation(program, "Light");
+
+	glUniform1i(glGetUniformLocation(program, "ShadowMap"), 0);
+	glUniform1i(glGetUniformLocation(program, "RotationTexture"), 1);
+	glUniform1f(glGetUniformLocation(program, "Scale"), 1.0f / 64.0f);
+	glUniform1f(glGetUniformLocation(program, "Radius"), 1.0f / 1024.0f);
+
+	glGenTextures(1, &ShadowMap);
+	glBindTexture(GL_TEXTURE_2D, ShadowMap);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, ShadowMapSize, ShadowMapSize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glBindTexture(GL_TEXTURE_2D, 0);*/
+
+	resourceManager->camera.SetPerspective(45.0f, (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.125f, 1024.0f);
+
+	/*glGenFramebuffersEXT(1, &FBO);
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, FBO);
+	glDrawBuffers(0, NULL); glReadBuffer(GL_NONE);
+	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, ShadowMap, 0);
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);*/
+
+	/*glm::vec3 LightPosition = (glm::vec3)(rotate2(-LightAngle, glm::vec3(0.0f, 1.0f, -1.0f)) * glm::vec4((float)resourceManager->getTerrainList()->at(0).GetSize(), 0.0f, 0.0f, 1.0f));
+	glm::vec3 LightDirection = glm::normalize(LightPosition);
+	glm::mat4 LightViewMatrix = glm::lookAt(LightPosition, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+	glm::vec3 Min, Max;
+
+	resourceManager->getTerrainList()->at(0).GetMinMax(LightViewMatrix, Min, Max);
+
+	glm::mat4 LightProjectionMatrix = glm::ortho(Min.x, Max.x, Min.y, Max.y, -Max.z, -Min.z);
+
+	glm::mat4 ShadowMatrix = BiasMatrix * LightProjectionMatrix * LightViewMatrix;
+
+	glUseProgram(resourceManager->getShaderList()->at(0)->getProgram());
+	glUniformMatrix4fv(ShadowID, 1, GL_FALSE, &ShadowMatrix[0][0]);
+	glUniform3fv(LightID, 1, &LightDirection[0]);
+
+	glViewport(0, 0, ShadowMapSize, ShadowMapSize);
+
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, FBO);
+
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);*/
+
+	float height = resourceManager->getTerrainList()->at(0).GetHeight(0.0f, 0.0f);
+	float offset = 1.75f;
+
+	resourceManager->camera.Look(glm::vec3(0.0f, height + offset, 0.0f), glm::vec3(0.0f, height + offset, -1.0f));
+
+	getClock().restart();
+	deltaTime.restart();
+
+	while (game)
+	{
+
+		resourceManager->Update(deltaTime.getElapsedTime().asSeconds());
+		deltaTime.restart();
+
+		getWindow()->display();
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+		{
+			game = false;
+		}
+	}
+	getWindow()->close();
+
+	return 0;
+}

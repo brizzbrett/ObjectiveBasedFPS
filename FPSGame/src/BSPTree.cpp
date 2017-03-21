@@ -19,7 +19,7 @@ void BSPTree::Init(Vertex* vertices, int *indices, int indicesCount, const glm::
 	{
 		root = new BSPNode();
 
-		root->InitAABB(min, max, 0, minAABBSize);
+		root->Split(min, max, 0, minAABBSize);
 
 		for (int i = 0; i < indicesCount; i += 3)
 		{
@@ -41,6 +41,63 @@ void BSPTree::Init(Vertex* vertices, int *indices, int indicesCount, const glm::
 	}
 }
 
+void BSPTree::QuickSortVisibleGeometryNodes(int Left, int Right)
+{
+	float Pivot = geometryNodes[(Left + Right) / 2]->GetDistance();
+	int i = Left, j = Right;
+
+	while (i <= j)
+	{
+		while (geometryNodes[i]->GetDistance() < Pivot) i++;
+		while (geometryNodes[j]->GetDistance() > Pivot) j--;
+
+		if (i <= j)
+		{
+			if (i != j)
+			{
+				BSPNode *Temp = geometryNodes[i];
+				geometryNodes[i] = geometryNodes[j];
+				geometryNodes[j] = Temp;
+			}
+
+			i++;
+			j--;
+		}
+	}
+
+	if (Left < j)
+	{
+		QuickSortVisibleGeometryNodes(Left, j);
+	}
+
+	if (i < Right)
+	{
+		QuickSortVisibleGeometryNodes(i, Right);
+	}
+}
+
+int BSPTree::CheckVisibility(Frustum &frustum, bool SortVisibleGeometryNodes)
+{
+	int TrianglesRendered = 0;
+
+	geometryNodesCount = 0;
+
+	if (root != NULL)
+	{
+		TrianglesRendered = root->CheckVisibility(frustum, geometryNodes, geometryNodesCount);
+
+		if (SortVisibleGeometryNodes)
+		{
+			if (geometryNodesCount > 1)
+			{
+				QuickSortVisibleGeometryNodes(0, geometryNodesCount - 1);
+			}
+		}
+	}
+
+	return TrianglesRendered;
+}
+
 void BSPTree::Render()
 {
 	if (geometryNodesCount > 0)
@@ -49,14 +106,6 @@ void BSPTree::Render()
 		{
 			geometryNodes[i]->Render();
 		}
-	}
-}
-
-void BSPTree::RenderAABB(int depth)
-{
-	if (root != NULL)
-	{
-		root->RenderAABB(depth);
 	}
 }
 

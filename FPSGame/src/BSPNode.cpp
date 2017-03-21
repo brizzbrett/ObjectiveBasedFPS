@@ -14,13 +14,15 @@ BSPNode::BSPNode()
 
 	left = NULL;
 	right = NULL;
+
+	shader = new Shader("shaders\\vs1.glsl", "shaders\\fs1.glsl", 0);
 }
 
 BSPNode::~BSPNode()
 {
 }
 
-void BSPNode::InitAABB(const glm::vec3 &min, const glm::vec3 &max, int depth, float minAABBSize)
+void BSPNode::Split(const glm::vec3 &min, const glm::vec3 &max, int depth, float minAABBSize)
 {
 	this->min = min;
 	this->max = max;
@@ -39,13 +41,13 @@ void BSPNode::InitAABB(const glm::vec3 &min, const glm::vec3 &max, int depth, fl
 
 		if (size.x >= size.z)
 		{
-			left->InitAABB(glm::vec3(min.x, min.y, min.z), glm::vec3(mid.x, max.y, max.z), depth + 1, minAABBSize);
-			right->InitAABB(glm::vec3(mid.x, min.y, min.z), glm::vec3(max.x, max.y, max.z), depth + 1, minAABBSize);
+			left->Split(glm::vec3(min.x, min.y, min.z), glm::vec3(mid.x, max.y, max.z), depth + 1, minAABBSize);
+			right->Split(glm::vec3(mid.x, min.y, min.z), glm::vec3(max.x, max.y, max.z), depth + 1, minAABBSize);
 		}
 		else
 		{
-			left->InitAABB(glm::vec3(min.x, min.y, min.z), glm::vec3(max.x, max.y, mid.z), depth + 1, minAABBSize);
-			right->InitAABB(glm::vec3(min.x, min.y, mid.z), glm::vec3(max.x, max.y, max.z), depth + 1, minAABBSize);
+			left->Split(glm::vec3(min.x, min.y, min.z), glm::vec3(max.x, max.y, mid.z), depth + 1, minAABBSize);
+			right->Split(glm::vec3(min.x, min.y, mid.z), glm::vec3(max.x, max.y, max.z), depth + 1, minAABBSize);
 		}
 	}
 }
@@ -178,13 +180,13 @@ int BSPNode::InitIndexBufferObject()
 
 	if (indicesCount > 0)
 	{
-		glGenBuffers(1, &IndexBufferObject);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBufferObject);
+		glGenBuffers(1, &indexbuffer);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesCount * sizeof(int), indices, GL_STATIC_DRAW);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-		//indexbuffer = new VertexBuffer(indices, indicesCount, GL_TRIANGLES, indicesCount, 0, NULL);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 		delete[] indices;
 		indices = NULL;
@@ -205,42 +207,54 @@ int BSPNode::InitIndexBufferObject()
 	return nodesCount;
 }
 
-void BSPNode::Render()
+int BSPNode::CheckVisibility(Frustum &frustum, BSPNode **geometryNodes, int &geometryNodesCount)
 {
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBufferObject);
+	int TrianglesRendered = 0;
 
-	glDrawElements(GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, NULL);
+	visible = aabb.Visible(frustum);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	/*indexbuffer->renderIndexBuffer();
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);*/
-}
-
-void BSPNode::RenderAABB(int depth)
-{
-	if (visible)
+	if (true)
 	{
-		if (depth == -1 || depth == this->depth)
+		if (indicesCount > 0)
 		{
-			aabb.Render();
+			distance = aabb.Distance(frustum);
+
+			geometryNodes[geometryNodesCount++] = this;
+
+			TrianglesRendered += indicesCount / 3;
 		}
 
 		if (left != NULL)
 		{
-			left->RenderAABB(depth);
+			TrianglesRendered += left->CheckVisibility(frustum, geometryNodes, geometryNodesCount);
 		}
 
 		if (right != NULL)
 		{
-			right->RenderAABB(depth);
+			TrianglesRendered += right->CheckVisibility(frustum, geometryNodes, geometryNodesCount);
 		}
 	}
+
+	return TrianglesRendered;
 }
+
+void BSPNode::Render()
+{
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
+	glDrawElements(GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, NULL);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
 void BSPNode::Destroy()
 {
 	if (indices != NULL)
 	{
 		delete[] indices;
+	}	
+	
+	if (indexbuffer != 0)
+	{
+		glDeleteBuffers(1, &indexbuffer);
 	}
 
 	if (left != NULL)

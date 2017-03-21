@@ -24,14 +24,15 @@
     <ClCompile Include="src\BSPTree.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Entity.cpp" />
+    <ClCompile Include="src\Frustum.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\Plane.cpp" />
     <ClCompile Include="src\ResourceManager.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\SimpleLogger.cpp" />
     <ClCompile Include="src\Terrain.cpp" />
     <ClCompile Include="src\TerrainTexturer.cpp" />
-    <ClCompile Include="src\VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\AABB.hpp" />
@@ -46,7 +47,10 @@
     <ClInclude Include="include\Terrain.hpp" />
     <ClInclude Include="include\TerrainTexturer.hpp" />
     <ClInclude Include="include\Vertex.hpp" />
-    <ClInclude Include="include\VertexBuffer.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\fs1.glsl" />
+    <None Include="shaders\vs1.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D33D94DD-A353-4AC5-AC43-3B013D840C2D}</ProjectGuid>

@@ -52,6 +52,12 @@ GLuint GraphicsInit()
 		exit(1);
 	}
 
+	if (!GLEW_EXT_framebuffer_object)
+	{
+		slog("GLEW FBO not set");
+		exit(0);
+	}
+
 	glEnable(GL_DEPTH_TEST | GL_CULL_FACE);
 
 	glDepthFunc(GL_LESS);

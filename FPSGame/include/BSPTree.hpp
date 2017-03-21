@@ -18,8 +18,9 @@ public:
 	~BSPTree();
 
 	void Init(Vertex* vertices, int *indices, int indicesCount, const glm::vec3 &min, const glm::vec3 &max, float minAABBSize = 16.0f);
+	void QuickSortVisibleGeometryNodes(int Left, int Right);
+	int CheckVisibility(Frustum &frustum, bool SortVisibleGeometryNodes);
 	void Render();
-	void RenderAABB(int depth);	
 	void Destroy();
 	
 

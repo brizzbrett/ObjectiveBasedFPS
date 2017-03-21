@@ -87,7 +87,6 @@ vertexAttrib(vertA)
 		glGetProgramInfoLog(program, infoLogLength, NULL, strInfoLog);
 
 		printf("Shader linker failure: %s\n", strInfoLog);
-		exit(1);
 	}
 
 	glDetachShader(program, vertexShader);

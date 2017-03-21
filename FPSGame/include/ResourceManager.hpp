@@ -6,6 +6,8 @@
 #include <vector>
 #include "Shader.hpp"
 #include "VertexBuffer.hpp"
+#include "Camera.hpp"
+#include "Entity.hpp"
 #include "Terrain.hpp"
 
 class ResourceManager
@@ -13,8 +15,9 @@ class ResourceManager
 
 protected:
 
-	std::vector<Shader*> *shaderArray; /**<Pointer to a vector array of Shader pointers */
-	std::vector<VertexBuffer*> *vertexBufferArray; /**<Pointer to a vector array of VertexBuffer pointers */
+	std::vector<Shader*> *shaderList; /**<Pointer to a vector array of Shader pointers */
+	std::vector<Entity*> *entityList; /**<Pointer to a vectory array of Entity pointers */
+	std::vector<Terrain> *terrainList; /**<Pointer to a vector array of Terrains */
 
 	/*
 	* @brief Resource Manager constructor. Internally created
@@ -27,18 +30,24 @@ protected:
 	~ResourceManager();
 
 public:
-
+	Camera camera;
 	/*
 	* @brief Getter: the pointer to the shader array
-	* @return shaderArray
+	* @return shaderList
 	*/
-	std::vector<Shader*>* getShaderArray() { return shaderArray; };
+	std::vector<Shader*>* getShaderList() { return shaderList; };
 
 	/*
-	* @brief Getter: the pointer to the vertex buffer array
-	* @return vertexBufferArray
+	* @brief Getter: the pointer to the entity array
+	* @return entityList
 	*/
-	std::vector<VertexBuffer*>* getVertexBufferArray() { return vertexBufferArray; };
+	std::vector<Entity*>* getEntityList() { return entityList; };
+
+	/*
+	* @brief Getter: the pointer to the terrain array
+	* @return terrainList
+	*/
+	std::vector<Terrain>* getTerrainList() { return terrainList; };
 
 	/*
 	* @brief Static function that returns the resource manager's memory location
@@ -50,6 +59,10 @@ public:
 	* @brief Destroys the Resource manager
 	*/
 	static void destroyResourceManager();
+
+	void Update(float dt);
+	void Draw();
+	
 
 };
 

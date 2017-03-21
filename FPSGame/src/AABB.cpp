@@ -33,24 +33,46 @@ bool AABB::PointInside(const glm::vec3 &Point)
 	return true;
 }
 
+bool AABB::Visible(Frustum &frustum)
+{
+	return frustum.AABBVisible(vertices);
+}
+
+float AABB::Distance(Frustum &frustum)
+{
+	return frustum.AABBDistance(vertices);
+}
+
 void AABB::Render()
 {
 	glBegin(GL_LINES);
 
-	glVertex3fv(&vertices[0][0]); glVertex3fv(&vertices[1][0]);
-	glVertex3fv(&vertices[2][0]); glVertex3fv(&vertices[3][0]);
-	glVertex3fv(&vertices[4][0]); glVertex3fv(&vertices[5][0]);
-	glVertex3fv(&vertices[6][0]); glVertex3fv(&vertices[7][0]);
+	glVertex3f(vertices[0].x, vertices[0].y, vertices[0].z); 
+	glVertex3f(vertices[1].x, vertices[1].y, vertices[1].z);
+	glVertex3f(vertices[2].x, vertices[2].y, vertices[2].z); 
+	glVertex3f(vertices[3].x, vertices[3].y, vertices[3].z);
+	glVertex3f(vertices[4].x, vertices[4].y, vertices[4].z);
+	glVertex3f(vertices[5].x, vertices[5].y, vertices[5].z);
+	glVertex3f(vertices[6].x, vertices[6].y, vertices[6].z);
+	glVertex3f(vertices[7].x, vertices[7].y, vertices[7].z);
 
-	glVertex3fv(&vertices[0][0]); glVertex3fv(&vertices[2][0]);
-	glVertex3fv(&vertices[1][0]); glVertex3fv(&vertices[3][0]);
-	glVertex3fv(&vertices[4][0]); glVertex3fv(&vertices[6][0]);
-	glVertex3fv(&vertices[5][0]); glVertex3fv(&vertices[7][0]);
+	glVertex3f(vertices[0].x, vertices[0].y, vertices[0].z);
+	glVertex3f(vertices[2].x, vertices[2].y, vertices[2].z);
+	glVertex3f(vertices[1].x, vertices[1].y, vertices[1].z);
+	glVertex3f(vertices[3].x, vertices[3].y, vertices[3].z);
+	glVertex3f(vertices[4].x, vertices[4].y, vertices[4].z);
+	glVertex3f(vertices[6].x, vertices[6].y, vertices[6].z);
+	glVertex3f(vertices[5].x, vertices[5].y, vertices[5].z);
+	glVertex3f(vertices[7].x, vertices[7].y, vertices[7].z);
 
-	glVertex3fv(&vertices[0][0]); glVertex3fv(&vertices[4][0]);
-	glVertex3fv(&vertices[1][0]); glVertex3fv(&vertices[5][0]);
-	glVertex3fv(&vertices[2][0]); glVertex3fv(&vertices[6][0]);
-	glVertex3fv(&vertices[3][0]); glVertex3fv(&vertices[7][0]);
+	glVertex3f(vertices[0].x, vertices[0].y, vertices[0].z);
+	glVertex3f(vertices[4].x, vertices[4].y, vertices[4].z);
+	glVertex3f(vertices[1].x, vertices[1].y, vertices[1].z);
+	glVertex3f(vertices[5].x, vertices[5].y, vertices[5].z);
+	glVertex3f(vertices[2].x, vertices[2].y, vertices[2].z);
+	glVertex3f(vertices[6].x, vertices[6].y, vertices[6].z);
+	glVertex3f(vertices[3].x, vertices[3].y, vertices[3].z);
+	glVertex3f(vertices[7].x, vertices[7].y, vertices[7].z);
 
 	glEnd();
 }
