@@ -11,11 +11,11 @@ BSPTree::~BSPTree()
 {
 }
 
-void BSPTree::Init(Vertex* vertices, int *indices, int indicesCount, const glm::vec3 &min, const glm::vec3 &max, float minAABBSize)
+void BSPTree::Init(Vertex* vertices, GLuint* indices, int indicesCount, const glm::vec3 &min, const glm::vec3 &max, float minAABBSize)
 {
 	Destroy();
 
-	if (vertices != NULL && indices != NULL && indicesCount > 0)
+	if (indicesCount > 0)
 	{
 		root = new BSPNode();
 
@@ -76,7 +76,7 @@ void BSPTree::QuickSortVisibleGeometryNodes(int Left, int Right)
 	}
 }
 
-int BSPTree::CheckVisibility(Frustum &frustum, bool SortVisibleGeometryNodes)
+int BSPTree::CheckVisibility(Frustum &frustum)
 {
 	int TrianglesRendered = 0;
 
@@ -86,13 +86,11 @@ int BSPTree::CheckVisibility(Frustum &frustum, bool SortVisibleGeometryNodes)
 	{
 		TrianglesRendered = root->CheckVisibility(frustum, geometryNodes, geometryNodesCount);
 
-		if (SortVisibleGeometryNodes)
+		if (geometryNodesCount > 1)
 		{
-			if (geometryNodesCount > 1)
-			{
-				QuickSortVisibleGeometryNodes(0, geometryNodesCount - 1);
-			}
+			QuickSortVisibleGeometryNodes(0, geometryNodesCount - 1);
 		}
+
 	}
 
 	return TrianglesRendered;

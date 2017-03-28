@@ -1,0 +1,20 @@
+Product details: Beautiful_Girl
+3D Max    1.27 MB
+Obj(.obj) 1.73 MB    
+FBX       461 KB
+
+3D Model Details
+
+Product ID:
+Published on: 
+Animated: No
+Rigged: No
+Lowpoly(game-ready): No
+Geometry: Polygon mesh
+Polygons: 21,162
+Vertices: 25,398	
+Texture: Yes
+Materials: Yes
+Uv Mapping: No
+Unwrapped UVs: Overlapping
+Plugins used: Vray

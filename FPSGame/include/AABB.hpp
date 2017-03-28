@@ -2,15 +2,13 @@
 #ifndef AABB_H
 #define AABB_H
 
-#include <iostream>
-#include <glew.h>
-#include <glm/glm.hpp>
-#include "Vertex.hpp"
+#include "MUtils.hpp"
 #include "Camera.hpp"
 
 class AABB
 {
 private:
+
 	glm::vec3 vertices[8]; /**<array of vertices */
 
 public:	
@@ -23,8 +21,6 @@ public:
 
 	bool Visible(Frustum &frustum);
 	float Distance(Frustum &frustum);
-
-	void Render();
 
 };
 

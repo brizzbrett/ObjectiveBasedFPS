@@ -2,18 +2,17 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include <iostream>
-#include <glew.h>
-#include <glm/glm.hpp>
-#include "VertexBuffer.hpp"
+#include "Model.hpp"
 #include "Camera.hpp"
 
 class Entity
 {
 protected: 
 
-	Camera* camera; /**<player's camera */
-	VertexBuffer* vertexBuffer; /**<entity's vertex buffer data */
+	Model* model; /**<entity's mesh */
+	glm::mat4 modelMatrix;
+
+	int active;
 
 	glm::vec3 position; /**<Entity position */
 	glm::vec3 scale; /**<Entity scale */
@@ -22,29 +21,10 @@ protected:
 public:
 
 	/*
-	* @brief Getter: the vertex buffer
-	* @return vertexBuffer
+	* @brief Getter: the model
+	* @return model
 	*/
-	VertexBuffer* getVertexBuffer() { return vertexBuffer; };
-
-	/*
-	* @brief Setter: the vertex and color buffers
-	* @param vbuff vertexBuffer's new value
-	* @param cbuff colorBuffer's new value
-	*/
-	void setVertexBuffer(VertexBuffer* vbuff) { vertexBuffer = vbuff; };
-
-	/*
-	* @brief Getter: the camera
-	* @return camera
-	*/
-	Camera* getCamera() { return camera; };
-
-	/*
-	* @brief Setter: the player camera
-	* @param cam camera's new camera
-	*/
-	void setCamera(Camera* cam) { camera = cam; };
+	Model* getModel() { return model; };
 
 	/*
 	* @brief Getter: the position
@@ -85,12 +65,16 @@ public:
 	/*
 	* @brief Entity constructor. Overloaded with 3 arguments.
 	*/
-	Entity(VertexBuffer* vbuff, glm::vec3 pos);
+	Entity(Model* m, glm::vec3 pos=glm::vec3(0.0f, 0.0f, 0.0f));
 
 	/*
 	* @brief Entity destructor.
 	*/
 	~Entity();
+
+	void Update();
+	virtual void Render(Shader* s);
+	
 };
 
 #endif

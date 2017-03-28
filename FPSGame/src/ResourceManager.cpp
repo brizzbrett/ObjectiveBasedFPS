@@ -3,19 +3,26 @@
 #define SCREEN_WIDTH 1280 /**<width of the window */ 
 #define SCREEN_HEIGHT 720 /**<height of the window */ 
 
+static sf::Clock deltaTime; /**<timer that tracks time since last iteration of game loop*/
+
 ResourceManager::ResourceManager()
 {
 
 	shaderList = new std::vector<Shader*>();
+	entityList = new std::vector<Entity*>();
+	terrainList = new std::vector<Terrain>();
 
-	Shader* shader = new Shader("shaders\\vs1.glsl", "shaders\\fs1.glsl", 0);
+	Shader* shader = new Shader("shaders\\vs1.glsl", "shaders\\fs1.glsl");
 
 	shaderList->push_back(shader);
 
-	entityList = new std::vector<Entity*>();
+	Player* p = new Player(NULL);
+	Entity* nanosuit = new Entity(new Model("Resources/models/player/nanosuit.obj"), glm::vec3(0.0f, 0.0f, 0.0f));
+	Entity* girl = new Entity(new Model("Resources/models/player/bgirl.obj"), glm::vec3(0.0f, 0.0f, 0.0f));
 
-	terrainList = new std::vector<Terrain>();
-
+	entityList->push_back(p);
+	entityList->push_back(nanosuit);
+	
 	Terrain terrain;
 
 	if (terrain.InitTerrain("terrain.jpg") == -1) {
@@ -24,6 +31,8 @@ ResourceManager::ResourceManager()
 	}
 
 	terrainList->push_back(terrain);
+
+	player = (Player*)entityList->at(0);
 }
 
 ResourceManager::~ResourceManager()
@@ -33,15 +42,13 @@ ResourceManager::~ResourceManager()
 		delete *it;
 	}
 
-	delete shaderList;
-
 	for (std::vector<Entity*>::iterator it = entityList->begin(); it != entityList->end(); it++)
 	{
 		delete *it;
 	}
 
+	delete shaderList;
 	delete entityList;
-
 	delete terrainList;
 }
 
@@ -63,37 +70,36 @@ void ResourceManager::destroyResourceManager()
 	delete rm;
 }
 
-void ResourceManager::Update(float dt)
+void ResourceManager::UpdateAll()
 {
-	glm::mat4 model = glm::mat4(1.0f);
 
-	getWindow()->clear(sf::Color::Transparent);
-	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	glm::vec3 movement = player->camera.KeyMove(deltaTime.getElapsedTime().asSeconds() * 0.5f);
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glm::vec3 camPos = player->camera.ref + movement;
 
-	GLuint PmatrixID = glGetUniformLocation(getShaderList()->at(0)->getProgram(), "Projection");
-	glUniformMatrix4fv(PmatrixID, 1, GL_FALSE, &camera.projection[0][0]);
+	//slog("%f, %f, %f", player->camera.ref.x, player->camera.ref.y, player->camera.ref.z);
+	camPos = terrainList->at(0).CheckCollision(player->camera, movement);
 
-	GLuint VmatrixID = glGetUniformLocation(getShaderList()->at(0)->getProgram(), "View");
-	glUniformMatrix4fv(VmatrixID, 1, GL_FALSE, &camera.view[0][0]);
+	player->setPosition(camPos);
 
-	GLuint MmatrixID = glGetUniformLocation(getShaderList()->at(0)->getProgram(), "Model");
-	glUniformMatrix4fv(MmatrixID, 1, GL_FALSE, &model[0][0]);
-
-	glUseProgram(getShaderList()->at(0)->getProgram());
-
-	glm::vec3 movement = camera.KeyMove(dt * 150.5f);
-
-	glm::vec3 camPos = camera.ref + movement;
-
-	slog("%f, %f, %f", camPos.x, camPos.y, camPos.z);
-	camPos = getTerrainList()->at(0).CheckCollision(camera, movement);
-
-	float height = getTerrainList()->at(0).GetHeight(camPos.x, camPos.z);
+	float height = terrainList->at(0).GetHeight(camPos.x, camPos.z);
 	float offset = 1.75f;
 
-	camera.CameraMovement(movement, camPos, height, offset);
+	player->camera.CameraMovement(movement, camPos, height, offset);
 
-	getTerrainList()->at(0).Render(camera);
+	for (int i = 0; i < entityList->size(); i++)
+	{
+		entityList->at(i)->Update();
+	}
+	deltaTime.restart();
+}
+void ResourceManager::DrawAll() 
+{
+	terrainList->at(0).Render(((Player*)entityList->at(0))->camera);
+
+	for (int i = 0; i < entityList->size(); i++)
+	{
+		entityList->at(i)->Render(shaderList->at(0));
+	}
+	
 }

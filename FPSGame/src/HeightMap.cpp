@@ -1,9 +1,9 @@
-#include "TerrainTexturer.hpp"
+#include "HeightMap.hpp"
 #include "SimpleLogger.hpp"
 
 int gl_max_texture_size = 1024, gl_max_texture_max_anisotropy_ext = 1024;
 
-Texture::Texture()
+HeightMap::HeightMap()
 {
 	texture = 0;
 
@@ -11,16 +11,16 @@ Texture::Texture()
 	height = 0;
 }
 
-Texture::~Texture()
+HeightMap::~HeightMap()
 {
 }
 
-Texture::operator GLuint ()
+HeightMap::operator GLuint ()
 {
 	return texture;
 }
 
-FIBITMAP *Texture::GetBitmap(char *FileName, int &width, int &height, int &BPP)
+FIBITMAP *HeightMap::GetBitmap(char *FileName, int &width, int &height, int &BPP)
 {
 	FREE_IMAGE_FORMAT fif = FreeImage_GetFileType(FileName);
 
@@ -81,7 +81,7 @@ FIBITMAP *Texture::GetBitmap(char *FileName, int &width, int &height, int &BPP)
 	return dib;
 }
 
-bool Texture::LoadTexture2D(char *FileName)
+bool HeightMap::LoadTexture2D(char *FileName)
 {
 
 	int width, height, BPP;
@@ -121,7 +121,6 @@ bool Texture::LoadTexture2D(char *FileName)
 	{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, gl_max_texture_max_anisotropy_ext);
 	}
-
 	glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, Format, GL_UNSIGNED_BYTE, FreeImage_GetBits(dib));
@@ -133,7 +132,7 @@ bool Texture::LoadTexture2D(char *FileName)
 	return true;
 }
 
-void Texture::Destroy()
+void HeightMap::Destroy()
 {
 	if (texture != 0)
 	{

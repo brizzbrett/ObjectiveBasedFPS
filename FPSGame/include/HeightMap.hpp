@@ -1,12 +1,12 @@
 #pragma once
-#ifndef TEXTURER_H
-#define TEXTURER_H
+#ifndef HMAP_H
+#define HMAP_H
 
 #include <glew.h>
 #include <glm/glm.hpp>
 #include <FreeImage.h>
 
-class Texture
+class HeightMap
 {
 private:
 	GLuint texture;
@@ -17,8 +17,8 @@ private:
 
 public:
 
-	Texture();
-	~Texture();
+	HeightMap();
+	~HeightMap();
 
 	operator GLuint ();
 

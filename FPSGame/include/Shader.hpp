@@ -1,7 +1,16 @@
 #pragma once
 #ifndef _SHADER_H_
 #define _SHADER_H_
+
 #include <glew.h>
+#include <iostream>
+#include <math.h>
+#include <SFML/Graphics.hpp>
+#include <SFML/OpenGL.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
+#include <glm/gtc/constants.hpp> // glm::pi
+#include <glm/gtc/type_ptr.hpp>
 
 #include "SimpleLogger.hpp"
 
@@ -42,7 +51,7 @@ public:
 	* @param vsPath a string of the vertex shader file path
 	* @param fsPath a string of the fragment shader file path
 	*/
-	Shader(const char *vsPath, const char *fsPath, GLuint vertA);
+	Shader(const char *vsPath, const char *fsPath);
 
 	/*
 	* @brief Shader Destructor: deletes the program

@@ -27,12 +27,15 @@
     <ClCompile Include="src\Frustum.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\Mesh.cpp" />
+    <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\Plane.cpp" />
+    <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\ResourceManager.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\SimpleLogger.cpp" />
     <ClCompile Include="src\Terrain.cpp" />
-    <ClCompile Include="src\TerrainTexturer.cpp" />
+    <ClCompile Include="src\HeightMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\AABB.hpp" />
@@ -41,12 +44,15 @@
     <ClInclude Include="include\Camera.hpp" />
     <ClInclude Include="include\Entity.hpp" />
     <ClInclude Include="include\Game.hpp" />
+    <ClInclude Include="include\Mesh.hpp" />
+    <ClInclude Include="include\Model.hpp" />
+    <ClInclude Include="include\Player.hpp" />
     <ClInclude Include="include\ResourceManager.hpp" />
     <ClInclude Include="include\Shader.hpp" />
     <ClInclude Include="include\SimpleLogger.hpp" />
     <ClInclude Include="include\Terrain.hpp" />
-    <ClInclude Include="include\TerrainTexturer.hpp" />
-    <ClInclude Include="include\Vertex.hpp" />
+    <ClInclude Include="include\HeightMap.hpp" />
+    <ClInclude Include="include\MUtils.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fs1.glsl" />
@@ -133,7 +139,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32.lib;opengl32.lib;glfw3.lib;sfml-system.lib;sfml-window.lib;sfml-graphics.lib;FreeImage.lib</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;opengl32.lib;glfw3.lib;sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;FreeImage.lib;assimp-vc140-mt.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -158,7 +164,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>SFML_DYNAMIC;WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SFML_DYNAMIC;WIN32;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>C:\Users\Brett\Desktop\3D Game Dev\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
@@ -168,7 +174,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32.lib;opengl32.lib;glfw3.lib;sfml-system.lib;sfml-window.lib;sfml-graphics.lib;FreeImage.lib</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;opengl32.lib;sfml-system.lib;sfml-window.lib;sfml-graphics.lib;FreeImage.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

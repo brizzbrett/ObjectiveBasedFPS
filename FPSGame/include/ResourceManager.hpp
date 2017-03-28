@@ -2,12 +2,10 @@
 #ifndef RESOURCE_MANAGER_H
 #define RESOURCE_MANAGER_H
 
-#include <iostream>
-#include <vector>
 #include "Shader.hpp"
 #include "VertexBuffer.hpp"
 #include "Camera.hpp"
-#include "Entity.hpp"
+#include "Player.hpp"
 #include "Terrain.hpp"
 
 class ResourceManager
@@ -30,7 +28,7 @@ protected:
 	~ResourceManager();
 
 public:
-	Camera camera;
+	Player* player;
 	/*
 	* @brief Getter: the pointer to the shader array
 	* @return shaderList
@@ -60,9 +58,8 @@ public:
 	*/
 	static void destroyResourceManager();
 
-	void Update(float dt);
-	void Draw();
-	
+	void UpdateAll();
+	void DrawAll();	
 
 };
 

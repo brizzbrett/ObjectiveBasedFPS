@@ -61,8 +61,7 @@ GLuint Shader::CreateShader(GLenum shaderType, const char *shaderFileStr)
 	return shader;
 }
 
-Shader::Shader(const char *vsPath, const char *fsPath, GLuint vertA):
-vertexAttrib(vertA)
+Shader::Shader(const char *vsPath, const char *fsPath)
 {
 	GLint infoLogLength;
 	GLint status;

@@ -12,8 +12,6 @@ Terrain::Terrain()
 	vertCount = 0;
 	indicesCount = 0;
 
-	vertbuffer = 0;
-	indexbuffer = 0;
 }
 
 Terrain::~Terrain()
@@ -23,40 +21,27 @@ Terrain::~Terrain()
 int Terrain::InitTerrain(char* file)
 {
 	
-	if (LoadTexture2D("terrain.jpg", 32.0f, -16.0f) == -1)
+	if (LoadTexture2D(file, 32.0f, -16.0f) == -1)
 	{
 		return -1;
 	}
-
-	Vertex *verts = new Vertex[vertCount];
+	Vertex* vertices = new Vertex[vertCount];
 
 	int i = 0;
 
-	for (int z = 0; z <= size; z++)
+	for (int z = 0, i = 0; z <= size; z++)
 	{
-		for (int x = 0; x <= size; x++)
+		for (int x = 0; x <= size; x++, i++)
 		{
-			verts[i].position = glm::vec3((float)x - halfSize, heights[i], halfSize - (float)z);
-			verts[i].normal = glm::normalize(glm::vec3(GetHeight(x - 1, z) - GetHeight(x + 1, z), 2.0f, GetHeight(x, z + 1) - GetHeight(x, z - 1)));
+			vertices[i].position = glm::vec3((float)x - halfSize, heights[i], halfSize - (float)z);
+			vertices[i].normal = glm::normalize(glm::vec3(GetHeight(x - 1, z) - GetHeight(x + 1, z), 2.0f, GetHeight(x, z + 1) - GetHeight(x, z - 1)));
 
-			i++;
 		}
 	}
 
-	slog("verts: %i", vertCount);
-
-	glGenBuffers(1, &vertbuffer);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vertbuffer);
-	glBufferData(GL_ARRAY_BUFFER, vertCount * sizeof(Vertex), verts, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 	indicesCount = size * size * 2 * 3;
 
-	int *indices = new int[indicesCount];
-
-	slog("Indices: %i", indicesCount);
+	GLuint* indices = new GLuint[indicesCount];
 
 	i = 0;
 
@@ -74,25 +59,36 @@ int Terrain::InitTerrain(char* file)
 		}
 	}
 
+	slog("verts: %i", vertCount);
+	slog("Indices: %i", indicesCount);
+
+	glGenBuffers(1, &vertbuffer);
 	glGenBuffers(1, &indexbuffer);
 
+	glBindBuffer(GL_ARRAY_BUFFER, vertbuffer);
+	glBufferData(GL_ARRAY_BUFFER, vertCount * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesCount * sizeof(int), indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesCount * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
 
-	tree.Init(verts, indices, indicesCount, min, max);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, normal));
 
-	delete[] verts;
-	delete[] indices;
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texels));
+
+	tree.Init(vertices, indices, indicesCount, min, max);
 
 	return 0;
 }
-int Terrain::LoadTexture2D(char *FileName, float Scale, float Offset)
+int Terrain::LoadTexture2D(char *file, float scale, float offset)
 {
-	Texture texture;
+	HeightMap texture;
 
-	if (!texture.LoadTexture2D(FileName))
+	if (!texture.LoadTexture2D(file))
 	{
 		return -1;
 	}
@@ -120,7 +116,7 @@ int Terrain::LoadTexture2D(char *FileName, float Scale, float Offset)
 
 	for (int i = 0; i < size * size; i++)
 	{
-		textureHeights[i] = textureHeights[i] * Scale + Offset;
+		textureHeights[i] = textureHeights[i] * scale + offset;
 	}
 
 	heights = new float[vertCount];
@@ -175,12 +171,12 @@ int Terrain::LoadTexture2D(char *FileName, float Scale, float Offset)
 	return 0;
 }
 
-int Terrain::CheckVisibility(Frustum &frustum, bool SortVisibleGeometryNodes)
+int Terrain::CheckVisibility(Frustum &frustum)
 {
-	return tree.CheckVisibility(frustum, SortVisibleGeometryNodes);
+	return tree.CheckVisibility(frustum);
 }
 
-glm::vec3 Terrain::CheckCollision(Camera cam, glm::vec3 movement)
+glm::vec3 Terrain::CheckCollision(Camera &cam, glm::vec3 movement)
 {
 	glm::vec3 camPos = cam.ref + movement;
 	glm::vec3 min = GetMin();
@@ -194,15 +190,9 @@ glm::vec3 Terrain::CheckCollision(Camera cam, glm::vec3 movement)
 	return camPos;
 }
 
-void Terrain::Render(Camera cam)
+void Terrain::Render(Camera &cam)
 {
-	CheckVisibility(cam.frustum, true);
-
-	glColor3f(1.0f, 1.0f, 1.0f);
-
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vertbuffer);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
+	CheckVisibility(cam.frustum);
 
 	tree.Render();
 
@@ -228,8 +218,6 @@ void Terrain::Destroy()
 	vertCount = 0;
 	indicesCount = 0;
 
-	vertbuffer = 0;
-	indexbuffer = 0;
 }
 
 void Terrain::GetMinMax(glm::mat4 &view, glm::vec3 &min, glm::vec3 &max)

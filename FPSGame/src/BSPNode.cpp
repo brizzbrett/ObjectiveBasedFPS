@@ -14,8 +14,6 @@ BSPNode::BSPNode()
 
 	left = NULL;
 	right = NULL;
-
-	shader = new Shader("shaders\\vs1.glsl", "shaders\\fs1.glsl", 0);
 }
 
 BSPNode::~BSPNode()
@@ -52,7 +50,7 @@ void BSPNode::Split(const glm::vec3 &min, const glm::vec3 &max, int depth, float
 	}
 }
 
-bool BSPNode::CheckTriangle(Vertex* vertices, int *indices, int A, int B, int C)
+bool BSPNode::CheckTriangle(Vertex* vertices, GLuint* indices, int A, int B, int C)
 {
 	if (aabb.PointInside(vertices[indices[A]].position))
 	{
@@ -104,7 +102,7 @@ void BSPNode::AllocateMemory()
 	}
 }
 
-bool BSPNode::AddTriangle(Vertex* vertices, int *indices, int A, int B, int C)
+bool BSPNode::AddTriangle(Vertex* vertices, GLuint* indices, int A, int B, int C)
 {
 	if (aabb.PointInside(vertices[indices[A]].position))
 	{
@@ -184,7 +182,7 @@ int BSPNode::InitIndexBufferObject()
 		glGenBuffers(1, &indexbuffer);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesCount * sizeof(int), indices, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesCount * sizeof(GLuint), indices, GL_STATIC_DRAW);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
@@ -241,7 +239,9 @@ int BSPNode::CheckVisibility(Frustum &frustum, BSPNode **geometryNodes, int &geo
 void BSPNode::Render()
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
+
 	glDrawElements(GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, NULL);
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 

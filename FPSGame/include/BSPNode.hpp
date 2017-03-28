@@ -2,7 +2,7 @@
 #ifndef BSPNODE_H
 #define BSPNODE_H
 
-#include "VertexBuffer.hpp"
+#include "Mesh.hpp"
 #include "AABB.hpp"
 
 class BSPNode
@@ -22,8 +22,6 @@ private:
 
 	int indicesCount; /**<number of indices */
 
-	Shader* shader;
-
 	BSPNode *left; /**<the left child node */
 	BSPNode *right; /**<the right child node */
 
@@ -33,9 +31,9 @@ public:
 	~BSPNode();
 	GLuint indexbuffer;
 	void Split(const glm::vec3 &min, const glm::vec3 &max, int depth, float minAABBSize);
-	bool CheckTriangle(Vertex* vertices, int *indices, int A, int B, int C);
+	bool CheckTriangle(Vertex* vertices, GLuint* indices, int A, int B, int C);
 	void AllocateMemory();
-	bool AddTriangle(Vertex* vertices, int *indices, int A, int B, int C);
+	bool AddTriangle(Vertex* vertices, GLuint* indices, int A, int B, int C);
 	void ResetAABB(Vertex* vertices);
 	int InitIndexBufferObject();
 	int CheckVisibility(Frustum &frustum, BSPNode **geometryNodes, int &geometryNodesCount);

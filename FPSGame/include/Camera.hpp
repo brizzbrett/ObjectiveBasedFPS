@@ -1,31 +1,22 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <iostream>
-#include <math.h>
-#include <glew.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/constants.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-#include <SFML/Graphics.hpp>
-#include <SFML/OpenGL.hpp>
-
 #include "Game.hpp"
 
 class Plane
 {
-private:
-	glm::vec3 N;
-	float ND;
-	int O;
+
+protected:
+
+	glm::vec3 normal;
+	float normalDot;
+	int order;
 
 public:
+
 	Plane();
 	~Plane();
 
-public:
 	void Set(const glm::vec3 &A, const glm::vec3 &B, const glm::vec3 &C);
 	bool AABBBehind(const glm::vec3 *AABBVertices);
 	float AABBDistance(const glm::vec3 *AABBVertices);
@@ -33,17 +24,18 @@ public:
 
 class Frustum
 {
-private:
+
+protected:
+
 	glm::vec3 verts[8];
 
-private:
 	Plane planes[6];
 
 public:
+
 	Frustum();
 	~Frustum();
 
-public:
 	void Set(const glm::mat4 &vpMatrixInverse);
 	bool AABBVisible(const glm::vec3 *AABBVertices);
 	float AABBDistance(const glm::vec3 *AABBVertices);
@@ -52,7 +44,8 @@ public:
 
 class Camera
 {
-private:
+
+protected:
 
 	int mousex;
 	int mousey;

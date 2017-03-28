@@ -2,14 +2,6 @@
 #ifndef _GAME_H_
 #define _GAME_H_
 
-#include <glew.h>
-#include <SFML/Graphics.hpp>
-#include <SFML/OpenGL.hpp>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
-#include <glm/gtc/constants.hpp> // glm::pi
-#include <glm/gtc/type_ptr.hpp>
-
 #include "Shader.hpp"
 #include "SimpleLogger.hpp"
 

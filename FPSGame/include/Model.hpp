@@ -1,60 +1,31 @@
 #pragma once
-#include "mesh.hpp"
-/**
-*3D model class. Supports most file formats. Imports and parses model file and stores mesh information
-*to use for rendering
-*/
+
+#include "Mesh.hpp"
+
 class Model
 {
 public:
-	/** Constructor
-	* Loads model data using Assimp
-	*/
-	Model(GLchar * filepath);
-	/** Destructor
-	*
-	*/
-	~Model();
+	/*  Functions   */
+	// Constructor, expects a filepath to a 3D model.
+	Model(GLchar* path);
 
-	/**
-	* @brief goes through meshes and updates them to use instanced rendering
-	* @param buffer the buffer with model matrix data
-	* @param amount number of times to instance
-	*/
-	void SetInstanceRendering(GLuint buffer, GLuint amount);
+	// Draws the model, and thus all its meshes
+	void Render(Shader* s);
 
-	/**
-	* @brief renders all the meshes of this model
-	* @param shader compiled shader id to use to render
-	*/
-	void Draw(GLuint shader);
 private:
-	std::vector<Texture>textures_loaded; /**<vector of loaded textures */  
-	std::vector<Mesh> meshes; /**<container for all meshes in model */  
-	std::string directory;/**< the file directory of model*/  
+	/*  Model Data  */
+	std::vector<Mesh> meshes;
+	std::string directory;
+	std::vector<Texture> textures_loaded;	// Stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
 
-	/**
-	*@brief Reads model file using assimp to get root node of model.
-	*@param filepath of model
-	*/
-	void LoadModel(std::string path);
-	/**
-	* @brief recursively traverses assimp nodes and loads meshes attached to each node
-	* @param node node to traverse and load meshes
-	* @oaram scene root assimp node
-	*/
-	void ProcessNode(aiNode * node, const aiScene* scene);
-	/**
-	* @brief initializes new mesh and stores textures in model class
-	* @param mesh assimp class that stores mesh verts, normals, textures, and uv coordinates
-	* @oaram scene root assimp node
-	*/
-	Mesh ProcessMesh(aiMesh * mesh, const aiScene* scene);
-	/**
-	* @brief loads texture data from file
-	* @param mat assimp material type with texture data
-	* @param type assimp texture type (diffuse / specular)
-	* @param type_name string name of texture type
-	*/
-	std::vector<Texture> LoadMaterials(aiMaterial *mat, aiTextureType type, std::string type_name);
+	void loadModel(std::string path);
+
+	// Processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
+	void processNode(aiNode* node, const aiScene* scene);
+
+	Mesh processMesh(aiMesh* mesh, const aiScene* scene);
+
+	// Checks all material textures of a given type and loads the textures if they're not loaded yet.
+	// The required info is returned as a Texture struct.
+	std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 };
