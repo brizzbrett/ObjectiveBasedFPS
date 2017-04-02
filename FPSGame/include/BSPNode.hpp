@@ -37,7 +37,7 @@ public:
 	void ResetAABB(Vertex* vertices);
 	int InitIndexBufferObject();
 	int CheckVisibility(Frustum &frustum, BSPNode **geometryNodes, int &geometryNodesCount);
-	void Render();
+	void Render(Shader* s);
 	void Destroy();
 
 

@@ -236,12 +236,10 @@ int BSPNode::CheckVisibility(Frustum &frustum, BSPNode **geometryNodes, int &geo
 	return TrianglesRendered;
 }
 
-void BSPNode::Render()
+void BSPNode::Render(Shader* s)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
-
 	glDrawElements(GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, NULL);
-
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 

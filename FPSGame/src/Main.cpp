@@ -32,8 +32,6 @@ int main(int argc, char *argv[])
 
 	player->camera.Look(glm::vec3(0.0f, height + offset, 0.0f), glm::vec3(0.0f, height + offset, -1.0f));
 
-	
-
 	getClock().restart();
 
 	while (game)

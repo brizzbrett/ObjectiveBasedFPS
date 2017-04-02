@@ -29,11 +29,13 @@
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Model.cpp" />
+    <ClCompile Include="src\MUtils.cpp" />
     <ClCompile Include="src\Plane.cpp" />
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\ResourceManager.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\SimpleLogger.cpp" />
+    <ClCompile Include="src\SpriteRenderer.cpp" />
     <ClCompile Include="src\Terrain.cpp" />
     <ClCompile Include="src\HeightMap.cpp" />
   </ItemGroup>
@@ -50,13 +52,17 @@
     <ClInclude Include="include\ResourceManager.hpp" />
     <ClInclude Include="include\Shader.hpp" />
     <ClInclude Include="include\SimpleLogger.hpp" />
+    <ClInclude Include="include\SpriteRenderer.hpp" />
     <ClInclude Include="include\Terrain.hpp" />
     <ClInclude Include="include\HeightMap.hpp" />
     <ClInclude Include="include\MUtils.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\fs1.glsl" />
-    <None Include="shaders\vs1.glsl" />
+    <None Include="shaders\model_fs.glsl" />
+    <None Include="shaders\model_vs.glsl" />
+    <None Include="shaders\sprite_vs.glsl" />
+    <None Include="shaders\terrain_fs.glsl" />
+    <None Include="shaders\terrain_vs.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D33D94DD-A353-4AC5-AC43-3B013D840C2D}</ProjectGuid>

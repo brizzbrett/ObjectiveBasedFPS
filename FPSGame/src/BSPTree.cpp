@@ -96,13 +96,13 @@ int BSPTree::CheckVisibility(Frustum &frustum)
 	return TrianglesRendered;
 }
 
-void BSPTree::Render()
+void BSPTree::Render(Shader* s)
 {
 	if (geometryNodesCount > 0)
 	{
 		for (int i = 0; i < geometryNodesCount; i++)
 		{
-			geometryNodes[i]->Render();
+			geometryNodes[i]->Render(s);
 		}
 	}
 }

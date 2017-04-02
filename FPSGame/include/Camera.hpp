@@ -59,7 +59,7 @@ public:
 
 	glm::vec3 x, y, z, pos, ref;
 
-	glm::mat4 view, viewInverse, projection, projectionInverse, viewprojection, vpMatrixInverse;
+	glm::mat4 view, viewInverse, projection, projectionInverse, viewprojection, vpMatrixInverse, ortho, orthoInverse;
 
 	Frustum frustum;
 
@@ -68,6 +68,7 @@ public:
 	glm::vec3 KeyMove(float dt);
 	void MouseMove(int dx, int dy);
 	void SetPerspective(float fovy, float aspect, float n, float f);
+	void SetOrtho(float width, float height);
 
 	void CameraMovement(glm::vec3 &movement, glm::vec3 &camPos, float &height, float &offset);
 

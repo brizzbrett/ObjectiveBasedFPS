@@ -15,7 +15,6 @@ void Entity::Update()
 }
 void Entity::Render(Shader* s)
 {
-
 	GLuint MmatrixID = glGetUniformLocation(s->getProgram(), "Model");
 	glUniformMatrix4fv(MmatrixID, 1, GL_FALSE, &modelMatrix[0][0]);
 

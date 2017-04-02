@@ -27,4 +27,7 @@ typedef struct
 	aiString path;
 }Texture;
 
+GLuint LoadTexture(const char* filepath, bool model);
+
+
 #endif

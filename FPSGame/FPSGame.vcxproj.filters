@@ -66,6 +66,12 @@
     <ClCompile Include="src\Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\SpriteRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp">
@@ -113,9 +119,15 @@
     <ClInclude Include="include\Model.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\SpriteRenderer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\fs1.glsl" />
-    <None Include="shaders\vs1.glsl" />
+    <None Include="shaders\model_fs.glsl" />
+    <None Include="shaders\model_vs.glsl" />
+    <None Include="shaders\terrain_fs.glsl" />
+    <None Include="shaders\terrain_vs.glsl" />
+    <None Include="shaders\sprite_vs.glsl" />
   </ItemGroup>
 </Project>

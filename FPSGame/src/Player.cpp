@@ -6,6 +6,7 @@
 Player::Player(Model* m, glm::vec3 pos) : Entity(m, pos)
 {
 	camera.SetPerspective(45.0f, (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.125f, 1024.0f);
+	camera.SetOrtho((float)SCREEN_WIDTH,(float)SCREEN_HEIGHT);
 }
 void Player::Render(Shader* s)
 {
@@ -18,9 +19,7 @@ void Player::Render(Shader* s)
 	glUniformMatrix4fv(VmatrixID, 1, GL_FALSE, &camera.view[0][0]);
 
 	GLuint MmatrixID = glGetUniformLocation(s->getProgram(), "Model");
-	glUniformMatrix4fv(MmatrixID, 1, GL_FALSE, &modelMatrix[0][0]);
-
-	glUseProgram(s->getProgram());
+	glUniformMatrix4fv(MmatrixID, 1, GL_FALSE, &modelMatrix[0][0]);	
 
 	if(model)
 		model->Render(s);

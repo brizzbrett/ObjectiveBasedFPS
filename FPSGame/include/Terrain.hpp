@@ -4,7 +4,7 @@
 
 #include "BSPTree.hpp"
 #include "HeightMap.hpp"
-#include "Mesh.hpp"
+#include "Player.hpp"
 
 class Terrain
 {
@@ -74,8 +74,9 @@ public:
 	/**
 	* @brief LoadTexture2D
 	* @param frustum a reference to the frustum for culling purposes
+	* @param s a shader
 	*/
-	void Render(Camera &cam);
+	void Render(Player* p, Shader* s);
 
 	/**
 	* @brief Destroy - resets all variables and clears up space

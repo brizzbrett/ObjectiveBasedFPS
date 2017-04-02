@@ -20,7 +20,7 @@ public:
 	void Init(Vertex* vertices, GLuint* indices, int indicesCount, const glm::vec3 &min, const glm::vec3 &max, float minAABBSize = 16.0f);
 	void QuickSortVisibleGeometryNodes(int Left, int Right);
 	int CheckVisibility(Frustum &frustum);
-	void Render();
+	void Render(Shader* s);
 	void Destroy();
 	
 

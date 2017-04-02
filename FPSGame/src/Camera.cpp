@@ -178,6 +178,12 @@ void Camera::SetPerspective(float fovy, float aspect, float n, float f)
 	frustum.Set(vpMatrixInverse);
 }
 
+void Camera::SetOrtho(float width, float height)
+{
+	ortho = glm::ortho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
+	orthoInverse = glm::inverse(ortho);
+}
+
 void Camera::SetView()
 {
 	view = glm::mat4(x.x, y.x, z.x, 0.0f, x.y, y.y, z.y, 0.0f, x.z, y.z, z.z, 0.0f, -glm::dot(x, pos), -glm::dot(y, pos), -glm::dot(z, pos), 1.0f);

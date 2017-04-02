@@ -7,13 +7,16 @@
 #include "Camera.hpp"
 #include "Player.hpp"
 #include "Terrain.hpp"
+#include "SpriteRenderer.hpp"
 
 class ResourceManager
 {
 
 protected:
 
-	std::vector<Shader*> *shaderList; /**<Pointer to a vector array of Shader pointers */
+
+	std::vector<Shader*> *shaderList; /**<Pointer to a vector array of Shader pointers */	
+	std::vector<SpriteRenderer*> *spriteList; /**<Pointer to a vector array of Sprite pointers */
 	std::vector<Entity*> *entityList; /**<Pointer to a vectory array of Entity pointers */
 	std::vector<Terrain> *terrainList; /**<Pointer to a vector array of Terrains */
 
@@ -34,6 +37,12 @@ public:
 	* @return shaderList
 	*/
 	std::vector<Shader*>* getShaderList() { return shaderList; };
+
+	/*
+	* @brief Getter: the pointer to the sprite array
+	* @return spriteList
+	*/
+	std::vector<SpriteRenderer*>* getSpriteList() { return spriteList; };
 
 	/*
 	* @brief Getter: the pointer to the entity array

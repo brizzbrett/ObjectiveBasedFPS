@@ -9,16 +9,24 @@ ResourceManager::ResourceManager()
 {
 
 	shaderList = new std::vector<Shader*>();
+	spriteList = new std::vector<SpriteRenderer*>();
 	entityList = new std::vector<Entity*>();
 	terrainList = new std::vector<Terrain>();
 
-	Shader* shader = new Shader("shaders\\vs1.glsl", "shaders\\fs1.glsl");
+	Shader* terrain_S = new Shader("shaders/terrain_vs.glsl", "shaders/terrain_fs.glsl");
+	Shader* model_S = new Shader("shaders/model_vs.glsl", "shaders/model_fs.glsl");
+	Shader* sprite_S = new Shader("shaders/sprite_vs.glsl", "shaders/sprite_fs.glsl");
+	
+	shaderList->push_back(terrain_S);
+	shaderList->push_back(model_S);
+	shaderList->push_back(sprite_S);
 
-	shaderList->push_back(shader);
+	SpriteRenderer* reticle = new SpriteRenderer(sprite_S, "Resources/UI/reticle.png");
+
+	spriteList->push_back(reticle);
 
 	Player* p = new Player(NULL);
 	Entity* nanosuit = new Entity(new Model("Resources/models/player/nanosuit.obj"), glm::vec3(0.0f, 0.0f, 0.0f));
-	Entity* girl = new Entity(new Model("Resources/models/player/bgirl.obj"), glm::vec3(0.0f, 0.0f, 0.0f));
 
 	entityList->push_back(p);
 	entityList->push_back(nanosuit);
@@ -42,12 +50,18 @@ ResourceManager::~ResourceManager()
 		delete *it;
 	}
 
+	for (std::vector<SpriteRenderer*>::iterator it = spriteList->begin(); it != spriteList->end(); it++)
+	{
+		delete *it;
+	}
+
 	for (std::vector<Entity*>::iterator it = entityList->begin(); it != entityList->end(); it++)
 	{
 		delete *it;
 	}
 
 	delete shaderList;
+	delete spriteList;
 	delete entityList;
 	delete terrainList;
 }
@@ -72,9 +86,7 @@ void ResourceManager::destroyResourceManager()
 
 void ResourceManager::UpdateAll()
 {
-
 	glm::vec3 movement = player->camera.KeyMove(deltaTime.getElapsedTime().asSeconds() * 0.5f);
-
 	glm::vec3 camPos = player->camera.ref + movement;
 
 	//slog("%f, %f, %f", player->camera.ref.x, player->camera.ref.y, player->camera.ref.z);
@@ -95,11 +107,30 @@ void ResourceManager::UpdateAll()
 }
 void ResourceManager::DrawAll() 
 {
-	terrainList->at(0).Render(((Player*)entityList->at(0))->camera);
+	glUseProgram(shaderList->at(0)->getProgram());
+	terrainList->at(0).Render(((Player*)entityList->at(0)), shaderList->at(0));
 
 	for (int i = 0; i < entityList->size(); i++)
 	{
-		entityList->at(i)->Render(shaderList->at(0));
+		glUseProgram(shaderList->at(1)->getProgram());
+		entityList->at(i)->Render(shaderList->at(1));
 	}
-	
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	//this should be disabled for UI and HUD stuffs, but enabled for 3D
+	glDisable(GL_DEPTH_TEST);
+
+	for (int i = 0; i < spriteList->size(); i++)
+	{
+		glUseProgram(shaderList->at(2)->getProgram());
+		spriteList->at(i)->DrawSprite(player->camera, glm::vec2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2),glm::vec2(50,50));
+	}
+
+	glDisable(GL_BLEND);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+
 }

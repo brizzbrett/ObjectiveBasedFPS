@@ -41,7 +41,7 @@ Mesh::~Mesh()
 
 void Mesh::Render(Shader* s)
 {
-	glUseProgram(s->getProgram());
+	
 
 	GLuint diffuseNr = 1;
 	GLuint specularNr = 1;

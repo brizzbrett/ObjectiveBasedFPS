@@ -190,11 +190,22 @@ glm::vec3 Terrain::CheckCollision(Camera &cam, glm::vec3 movement)
 	return camPos;
 }
 
-void Terrain::Render(Camera &cam)
+void Terrain::Render(Player* p, Shader* s)
 {
-	CheckVisibility(cam.frustum);
+	glm::mat4 modelMatrix = glm::mat4(1.0f);
 
-	tree.Render();
+	CheckVisibility(p->camera.frustum);
+
+	GLuint PmatrixID = glGetUniformLocation(s->getProgram(), "Projection");
+	glUniformMatrix4fv(PmatrixID, 1, GL_FALSE, &p->camera.projection[0][0]);
+
+	GLuint VmatrixID = glGetUniformLocation(s->getProgram(), "View");
+	glUniformMatrix4fv(VmatrixID, 1, GL_FALSE, &p->camera.view[0][0]);
+
+	GLuint MmatrixID = glGetUniformLocation(s->getProgram(), "Model");
+	glUniformMatrix4fv(MmatrixID, 1, GL_FALSE, &modelMatrix[0][0]);
+
+	tree.Render(s);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
