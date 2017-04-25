@@ -58,8 +58,11 @@
     <ClInclude Include="include\MUtils.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\light_fs.glsl" />
+    <None Include="shaders\light_vs.glsl" />
     <None Include="shaders\model_fs.glsl" />
     <None Include="shaders\model_vs.glsl" />
+    <None Include="shaders\sprite_fs.glsl" />
     <None Include="shaders\sprite_vs.glsl" />
     <None Include="shaders\terrain_fs.glsl" />
     <None Include="shaders\terrain_vs.glsl" />
@@ -117,16 +120,16 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Brett\Desktop\3D Game Dev\includes;C:\Users\Brett\Desktop\3D Game Dev\FPSGame\FPSGame\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Brett\Desktop\3D Game Dev\libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Brett\Desktop\Game Dev\3D Game Dev\includes;C:\Users\Brett\Desktop\Game Dev\3D Game Dev\FPSGame\FPSGame\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Brett\Desktop\Game Dev\3D Game Dev\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Users\Brett\Desktop\3D Game Dev\includes;C:\Users\Brett\Desktop\3D Game Dev\FPSGame\FPSGame\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Brett\Desktop\3D Game Dev\libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Brett\Desktop\Game Dev\3D Game Dev\includes;C:\Users\Brett\Desktop\Game Dev\3D Game Dev\FPSGame\FPSGame\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Brett\Desktop\Game Dev\3D Game Dev\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -139,7 +142,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>SFML_DYNAMIC;WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\Brett\Desktop\3D Game Dev\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Brett\Desktop\Game Dev\3D Game Dev\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>Default</CompileAs>
     </ClCompile>
     <Link>
@@ -172,7 +175,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>SFML_DYNAMIC;WIN32;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\Brett\Desktop\3D Game Dev\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Brett\Desktop\Game Dev\3D Game Dev\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>

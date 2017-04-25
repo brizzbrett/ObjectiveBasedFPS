@@ -28,14 +28,26 @@ int main(int argc, char *argv[])
 	Player* player = (Player*)resourceManager->getEntityList()->at(0);
 
 	float height = resourceManager->getTerrainList()->at(0).GetHeight(0.0f, 0.0f);
-	float offset = 1.75f;
+	float offset = 8.75f;
 
 	player->camera.Look(glm::vec3(0.0f, height + offset, 0.0f), glm::vec3(0.0f, height + offset, -1.0f));
 
-	getClock().restart();
+	double lastTime = getClock().restart().asSeconds();
+
+	int nbFrames = 0;
 
 	while (game)
 	{
+		//test fps
+		double currentTime = getClock().restart().asSeconds();
+		nbFrames++;
+
+		if (currentTime - lastTime >= 1.0)
+		{ 
+			printf("%f ms/frame\n", 1000.0 / double(nbFrames));
+			nbFrames = 0;
+			lastTime += 1.0;
+		}
 
 		getWindow()->clear(sf::Color::Transparent);
 
@@ -43,8 +55,6 @@ int main(int argc, char *argv[])
 
 		resourceManager->UpdateAll();
 		resourceManager->DrawAll();
-
-		//slog("%f,%f", player->getPosition().x, player->getPosition().y);
 
 		getWindow()->display();
 

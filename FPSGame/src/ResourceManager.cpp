@@ -16,6 +16,7 @@ ResourceManager::ResourceManager()
 	Shader* terrain_S = new Shader("shaders/terrain_vs.glsl", "shaders/terrain_fs.glsl");
 	Shader* model_S = new Shader("shaders/model_vs.glsl", "shaders/model_fs.glsl");
 	Shader* sprite_S = new Shader("shaders/sprite_vs.glsl", "shaders/sprite_fs.glsl");
+	//Shader* light_S = new Shader("shaders/light_vs.glsl", "shaders/light_fs.glsl");
 	
 	shaderList->push_back(terrain_S);
 	shaderList->push_back(model_S);
@@ -26,7 +27,9 @@ ResourceManager::ResourceManager()
 	spriteList->push_back(reticle);
 
 	Player* p = new Player(NULL);
-	Entity* nanosuit = new Entity(new Model("Resources/models/player/nanosuit.obj"), glm::vec3(0.0f, 0.0f, 0.0f));
+	Entity* nanosuit = new Entity(new Model("Resources/models/player/nanosuit.obj"), glm::vec3(0.0f, 2.5f, 0.0f));
+	Entity* lightsource = new Entity(new Model("Resources/models/lights/cube.obj"), glm::vec3(0.0f, 30.0f, 0.0f), LIGHT_SOURCE);
+
 
 	entityList->push_back(p);
 	entityList->push_back(nanosuit);
@@ -41,6 +44,11 @@ ResourceManager::ResourceManager()
 	terrainList->push_back(terrain);
 
 	player = (Player*)entityList->at(0);
+
+	float height = getTerrainList()->at(0).GetHeight(0.0f, 0.0f);
+	float offset = 8.75f;
+
+	player->camera.Look(glm::vec3(0.0f, height + offset, 0.0f), glm::vec3(0.0f, height + offset, -1.0f));
 }
 
 ResourceManager::~ResourceManager()
@@ -95,7 +103,7 @@ void ResourceManager::UpdateAll()
 	player->setPosition(camPos);
 
 	float height = terrainList->at(0).GetHeight(camPos.x, camPos.z);
-	float offset = 1.75f;
+	float offset = 8.75f;
 
 	player->camera.CameraMovement(movement, camPos, height, offset);
 
@@ -107,14 +115,30 @@ void ResourceManager::UpdateAll()
 }
 void ResourceManager::DrawAll() 
 {
+	
+	Entity* tempLight = NULL;
+
 	glUseProgram(shaderList->at(0)->getProgram());
 	terrainList->at(0).Render(((Player*)entityList->at(0)), shaderList->at(0));
 
 	for (int i = 0; i < entityList->size(); i++)
 	{
-		glUseProgram(shaderList->at(1)->getProgram());
-		entityList->at(i)->Render(shaderList->at(1));
+		if (entityList->at(i)->type == LIGHT_SOURCE)
+		{
+			tempLight = entityList->at(i);
+		}
+		else
+		{
+			glUseProgram(shaderList->at(1)->getProgram());
+			entityList->at(i)->Render(shaderList->at(1));
+		}
 	}
+
+	/*if (tempLight)
+	{
+		glUseProgram(shaderList->at(3)->getProgram());
+		tempLight->Render(shaderList->at(3));
+	}*/
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

@@ -5,6 +5,7 @@
 
 Player::Player(Model* m, glm::vec3 pos) : Entity(m, pos)
 {
+	this->type = PLAYER;
 	camera.SetPerspective(45.0f, (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.125f, 1024.0f);
 	camera.SetOrtho((float)SCREEN_WIDTH,(float)SCREEN_HEIGHT);
 }

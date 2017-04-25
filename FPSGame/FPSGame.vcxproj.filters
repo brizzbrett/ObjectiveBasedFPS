@@ -129,5 +129,8 @@
     <None Include="shaders\terrain_fs.glsl" />
     <None Include="shaders\terrain_vs.glsl" />
     <None Include="shaders\sprite_vs.glsl" />
+    <None Include="shaders\sprite_fs.glsl" />
+    <None Include="shaders\light_fs.glsl" />
+    <None Include="shaders\light_vs.glsl" />
   </ItemGroup>
 </Project>

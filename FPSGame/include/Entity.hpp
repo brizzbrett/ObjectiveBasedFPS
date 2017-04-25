@@ -5,13 +5,17 @@
 #include "Model.hpp"
 #include "Camera.hpp"
 
+#define PLAYER 0
+#define LIGHT_SOURCE 1
+#define OTHER 2
+
 class Entity
 {
 protected: 
 
 	Model* model; /**<entity's mesh */
 	glm::mat4 modelMatrix;
-
+	
 	int active;
 
 	glm::vec3 position; /**<Entity position */
@@ -19,6 +23,8 @@ protected:
 	glm::vec3 rotation; /**<Entity rotation */
 
 public:
+
+	int type;
 
 	/*
 	* @brief Getter: the model
@@ -65,7 +71,7 @@ public:
 	/*
 	* @brief Entity constructor. Overloaded with 3 arguments.
 	*/
-	Entity(Model* m, glm::vec3 pos=glm::vec3(0.0f, 0.0f, 0.0f));
+	Entity(Model* m, glm::vec3 pos=glm::vec3(0.0f, 0.0f, 0.0f), int t=OTHER);
 
 	/*
 	* @brief Entity destructor.

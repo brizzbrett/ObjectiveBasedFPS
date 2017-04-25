@@ -15,4 +15,3 @@ void main()
 	gl_Position = Projection * View * Model * vec4(verts_ms, 1.0f);
 	texCoords = uv_ms;	
 }
-}

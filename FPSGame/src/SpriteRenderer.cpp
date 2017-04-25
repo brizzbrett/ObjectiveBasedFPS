@@ -43,6 +43,7 @@ void SpriteRenderer::DrawSprite(Camera &cam, glm::vec2 position, glm::vec2 size,
 	glUseProgram(shader->getProgram());
 	glm::mat4 model;
 	glm::vec2 center_position = glm::vec2(position.x - (size.x / 2), position.y - (size.y / 2));
+
 	model = glm::translate(model, glm::vec3(center_position, 0.0f));  // First translate (transformations are: scale happens first, then rotation and then finall translation happens; reversed order)
 
 	model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f)); // Move origin of rotation to center of quad

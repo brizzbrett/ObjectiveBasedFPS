@@ -23,7 +23,6 @@ public:
 	void Render(Shader* s);
 	void Destroy();
 	
-
 };
 
 #endif

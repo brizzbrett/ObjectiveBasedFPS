@@ -1,7 +1,7 @@
 #include "Entity.hpp"
 
-Entity::Entity(Model* m, glm::vec3 pos) :
-model(m), position(pos)
+Entity::Entity(Model* m, glm::vec3 pos, int t) :
+model(m), position(pos), type(t)
 {
 	modelMatrix = glm::translate(glm::mat4(1.0f), this->position);
 }
