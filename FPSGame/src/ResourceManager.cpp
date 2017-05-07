@@ -109,8 +109,18 @@ void ResourceManager::UpdateAll()
 
 	for (int i = 0; i < entityList->size(); i++)
 	{
-		entityList->at(i)->Update();
+		if (entityList->at(i)->type == 0)
+		{
+			continue;
+		}
+		else
+		{
+			entityList->at(i)->Update();
+		}
 	}
+
+	player->Update();
+
 	deltaTime.restart();
 }
 void ResourceManager::DrawAll() 

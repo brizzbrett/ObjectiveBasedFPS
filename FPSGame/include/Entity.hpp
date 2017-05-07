@@ -4,33 +4,45 @@
 
 #include "Model.hpp"
 #include "Camera.hpp"
+#include "BSPTree.hpp"
 
 #define PLAYER 0
 #define LIGHT_SOURCE 1
-#define OTHER 2
+#define PLAYER_SPAWN 2
+#define OTHER 3
 
 class Entity
 {
 protected: 
 
+	Entity* owner; /**<this entity's owner*/
+
 	Model* model; /**<entity's mesh */
 	glm::mat4 modelMatrix;
 	
-	int active;
+	bool active;
 
-	glm::vec3 position; /**<Entity position */
-	glm::vec3 scale; /**<Entity scale */
-	glm::vec3 rotation; /**<Entity rotation */
+	
 
 public:
 
 	int type;
+	
+	glm::vec3 position; /**<Entity position */
+	glm::vec3 scale; /**<Entity scale */
+	glm::vec3 rotation; /**<Entity rotation */
+
+	BSPTree tree; /**<The BSP Tree */
 
 	/*
 	* @brief Getter: the model
 	* @return model
 	*/
 	Model* getModel() { return model; };
+
+	void SetActive(bool set) { active = set; };
+
+	bool IsActive() { return active; };
 
 	/*
 	* @brief Getter: the position

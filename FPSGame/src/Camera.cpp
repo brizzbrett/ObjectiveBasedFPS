@@ -74,39 +74,39 @@ glm::vec3 Camera::KeyMove(float dt)
 
 	float Distance = Speed * dt;
 
-	glm::vec3 Up(0.0f, 1.0f, 0.0f);
-	glm::vec3 Right = x;
-	glm::vec3 Forward = glm::cross(Up, Right);
+	up = glm::vec3(0.0f, 1.0f, 0.0f);
+	right = x;
+	forward = glm::cross(up, right);
 
-	Up *= Distance;
-	Right *= Distance;
-	Forward *= Distance;
+	up *= Distance;
+	right *= Distance;
+	forward *= Distance;
 
 	glm::vec3 movement;
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) 
 	{ 
-		movement += Forward; 
+		movement += forward; 
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) 
 	{ 
-		movement -= Forward; 
+		movement -= forward; 
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) 
 	{ 
-		movement -= Right; 
+		movement -= right; 
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) 
 	{ 
-		movement += Right; 
+		movement += right; 
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) 
 	{ 
-		movement += Up; 
+		movement += up; 
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) 
 	{ 
-		movement -= Up; 
+		movement -= up; 
 	}
 
 	return movement;
@@ -164,6 +164,10 @@ void Camera::MouseMove(int dx, int dy)
 	}
 
 	pos = ref + z * glm::length(pos);
+
+	up = y;
+	right = x;
+	forward = glm::cross(up, right);
 
 	SetView();
 }

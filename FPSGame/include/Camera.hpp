@@ -61,6 +61,10 @@ public:
 
 	glm::mat4 view, viewInverse, projection, projectionInverse, viewprojection, vpMatrixInverse, ortho, orthoInverse;
 
+	glm::vec3 up;
+	glm::vec3 right;
+	glm::vec3 forward;
+
 	Frustum frustum;
 
 	void Look(const glm::vec3 &pos, const glm::vec3 &ref, bool rotAroundRef = false);

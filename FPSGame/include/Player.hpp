@@ -8,6 +8,9 @@ class Player : public Entity
 {
 
 protected:
+	std::vector<Entity*> projectiles;
+	
+	void Fire();
 
 public:
 	Camera camera;
@@ -17,6 +20,7 @@ public:
 
 	void Update();
 	void Render(Shader* s);
+	
 
 };
 

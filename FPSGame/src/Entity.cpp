@@ -4,6 +4,7 @@ Entity::Entity(Model* m, glm::vec3 pos, int t) :
 model(m), position(pos), type(t)
 {
 	modelMatrix = glm::translate(glm::mat4(1.0f), this->position);
+	
 }
 Entity::~Entity()
 {
@@ -11,6 +12,7 @@ Entity::~Entity()
 }
 void Entity::Update()
 {
+	slog("Updating Entities...");
 	modelMatrix = glm::translate(glm::mat4(1.0f), this->position);
 }
 void Entity::Render(Shader* s)
@@ -19,5 +21,7 @@ void Entity::Render(Shader* s)
 	glUniformMatrix4fv(MmatrixID, 1, GL_FALSE, &modelMatrix[0][0]);
 
 	if(model)
+	{
 		model->Render(s);
+	}
 }
