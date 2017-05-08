@@ -22,6 +22,8 @@ public:
 	bool Visible(Frustum &frustum);
 	float Distance(Frustum &frustum);
 
+	void Render();
+
 };
 
 

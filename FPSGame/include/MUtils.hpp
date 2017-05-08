@@ -29,5 +29,6 @@ typedef struct
 
 GLuint LoadTexture(const char* filepath, bool model);
 
+GLuint LoadCubeMap(std::vector<const GLchar*> faces);
 
 #endif

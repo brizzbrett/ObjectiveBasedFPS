@@ -78,6 +78,8 @@ public:
 	*/
 	void Render(Player* p, Shader* s);
 
+	void RenderAABB(int Depth);
+
 	/**
 	* @brief Destroy - resets all variables and clears up space
 	*/

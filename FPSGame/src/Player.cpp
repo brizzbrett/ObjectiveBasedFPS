@@ -14,7 +14,7 @@ Player::Player(Model* m, glm::vec3 pos) : Entity(m, pos)
 }
 void Player::Update()
 {
-	slog("Updating Player...");
+	//slog("Updating Player...");
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 	{
 		this->Fire();

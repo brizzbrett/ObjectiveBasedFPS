@@ -21,6 +21,7 @@ public:
 	void QuickSortVisibleGeometryNodes(int Left, int Right);
 	int CheckVisibility(Frustum &frustum);
 	void Render(Shader* s);
+	void RenderAABB(int Depth);
 	void Destroy();
 	
 };

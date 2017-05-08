@@ -5,6 +5,51 @@
 
 static sf::Clock deltaTime; /**<timer that tracks time since last iteration of game loop*/
 
+GLfloat skyboxVertices[] = {
+	// Positions          
+	-1.0f,  1.0f, -1.0f,
+	-1.0f, -1.0f, -1.0f,
+	1.0f, -1.0f, -1.0f,
+	1.0f, -1.0f, -1.0f,
+	1.0f,  1.0f, -1.0f,
+	-1.0f,  1.0f, -1.0f,
+
+	-1.0f, -1.0f,  1.0f,
+	-1.0f, -1.0f, -1.0f,
+	-1.0f,  1.0f, -1.0f,
+	-1.0f,  1.0f, -1.0f,
+	-1.0f,  1.0f,  1.0f,
+	-1.0f, -1.0f,  1.0f,
+
+	1.0f, -1.0f, -1.0f,
+	1.0f, -1.0f,  1.0f,
+	1.0f,  1.0f,  1.0f,
+	1.0f,  1.0f,  1.0f,
+	1.0f,  1.0f, -1.0f,
+	1.0f, -1.0f, -1.0f,
+
+	-1.0f, -1.0f,  1.0f,
+	-1.0f,  1.0f,  1.0f,
+	1.0f,  1.0f,  1.0f,
+	1.0f,  1.0f,  1.0f,
+	1.0f, -1.0f,  1.0f,
+	-1.0f, -1.0f,  1.0f,
+
+	-1.0f,  1.0f, -1.0f,
+	1.0f,  1.0f, -1.0f,
+	1.0f,  1.0f,  1.0f,
+	1.0f,  1.0f,  1.0f,
+	-1.0f,  1.0f,  1.0f,
+	-1.0f,  1.0f, -1.0f,
+
+	-1.0f, -1.0f, -1.0f,
+	-1.0f, -1.0f,  1.0f,
+	1.0f, -1.0f, -1.0f,
+	1.0f, -1.0f, -1.0f,
+	-1.0f, -1.0f,  1.0f,
+	1.0f, -1.0f,  1.0f
+};
+
 ResourceManager::ResourceManager()
 {
 
@@ -13,14 +58,37 @@ ResourceManager::ResourceManager()
 	entityList = new std::vector<Entity*>();
 	terrainList = new std::vector<Terrain>();
 
+	// Setup skybox VAO
+	glGenVertexArrays(1, &skyboxVAO);
+	glGenBuffers(1, &skyboxVBO);
+	glBindVertexArray(skyboxVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+	glBindVertexArray(0);
+
+	std::vector<const GLchar*> faces;
+	faces.push_back("Resources/right.jpg");
+	faces.push_back("Resources/left.jpg");
+	faces.push_back("Resources/top.jpg");
+	faces.push_back("Resources/bottom.jpg");
+	faces.push_back("Resources/back.jpg");
+	faces.push_back("Resources/front.jpg");
+
+	cubemapTexture = LoadCubeMap(faces);
+
+	aabbOn = false;
+
 	Shader* terrain_S = new Shader("shaders/terrain_vs.glsl", "shaders/terrain_fs.glsl");
 	Shader* model_S = new Shader("shaders/model_vs.glsl", "shaders/model_fs.glsl");
 	Shader* sprite_S = new Shader("shaders/sprite_vs.glsl", "shaders/sprite_fs.glsl");
-	//Shader* light_S = new Shader("shaders/light_vs.glsl", "shaders/light_fs.glsl");
+	Shader* cubemap_S = new Shader("shaders/light_vs.glsl", "shaders/light_fs.glsl");
 	
 	shaderList->push_back(terrain_S);
 	shaderList->push_back(model_S);
 	shaderList->push_back(sprite_S);
+	shaderList->push_back(cubemap_S);
 
 	SpriteRenderer* reticle = new SpriteRenderer(sprite_S, "Resources/UI/reticle.png");
 
@@ -28,8 +96,6 @@ ResourceManager::ResourceManager()
 
 	Player* p = new Player(NULL);
 	Entity* nanosuit = new Entity(new Model("Resources/models/player/nanosuit.obj"), glm::vec3(0.0f, 2.5f, 0.0f));
-	Entity* lightsource = new Entity(new Model("Resources/models/lights/cube.obj"), glm::vec3(0.0f, 30.0f, 0.0f), LIGHT_SOURCE);
-
 
 	entityList->push_back(p);
 	entityList->push_back(nanosuit);
@@ -119,6 +185,11 @@ void ResourceManager::UpdateAll()
 		}
 	}
 
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F5))
+	{
+		aabbOn = !aabbOn;
+	}
+
 	player->Update();
 
 	deltaTime.restart();
@@ -128,8 +199,32 @@ void ResourceManager::DrawAll()
 	
 	Entity* tempLight = NULL;
 
+	glDepthMask(GL_FALSE);// Remember to turn depth writing off
+	glUseProgram(shaderList->at(3)->getProgram());
+	glm::mat4 view = glm::mat4(glm::mat3(player->camera.view));	// Remove any translation component of the view matrix
+	glm::mat4 projection = glm::perspective(45.0f, (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.125f, 1024.0f);
+	glUniformMatrix4fv(glGetUniformLocation(shaderList->at(3)->getProgram(), "view"), 1, GL_FALSE, &view[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(shaderList->at(3)->getProgram(), "projection"), 1, GL_FALSE, &projection[0][0]);
+	// skybox cube
+	glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(glGetUniformLocation(shaderList->at(3)->getProgram(), "skybox"), 0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 07);
+	//glBindVertexArray(0);
+	glDepthMask(GL_TRUE);
+	
+
 	glUseProgram(shaderList->at(0)->getProgram());
 	terrainList->at(0).Render(((Player*)entityList->at(0)), shaderList->at(0));
+
+	if (aabbOn)
+	{
+		terrainList->at(0).RenderAABB(-1);
+	}
+
 
 	for (int i = 0; i < entityList->size(); i++)
 	{
@@ -143,12 +238,6 @@ void ResourceManager::DrawAll()
 			entityList->at(i)->Render(shaderList->at(1));
 		}
 	}
-
-	/*if (tempLight)
-	{
-		glUseProgram(shaderList->at(3)->getProgram());
-		tempLight->Render(shaderList->at(3));
-	}*/
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

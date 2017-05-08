@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
 
 	while (game)
 	{
+		getWindow()->display();
 
 		getWindow()->clear(sf::Color::Transparent);
 
@@ -42,7 +43,7 @@ int main(int argc, char *argv[])
 		resourceManager->UpdateAll();
 		resourceManager->DrawAll();
 
-		getWindow()->display();
+		
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 		{

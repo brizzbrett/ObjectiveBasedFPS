@@ -42,3 +42,25 @@ float AABB::Distance(Frustum &frustum)
 {
 	return frustum.AABBDistance(vertices);
 }
+
+void AABB::Render()
+{
+	glBegin(GL_LINES);
+
+	glVertex3fv(&vertices[0][0]); glVertex3fv(&vertices[1][0]);
+	glVertex3fv(&vertices[2][0]); glVertex3fv(&vertices[3][0]);
+	glVertex3fv(&vertices[4][0]); glVertex3fv(&vertices[5][0]);
+	glVertex3fv(&vertices[6][0]); glVertex3fv(&vertices[7][0]);
+
+	glVertex3fv(&vertices[0][0]); glVertex3fv(&vertices[2][0]);
+	glVertex3fv(&vertices[1][0]); glVertex3fv(&vertices[3][0]);
+	glVertex3fv(&vertices[4][0]); glVertex3fv(&vertices[6][0]);
+	glVertex3fv(&vertices[5][0]); glVertex3fv(&vertices[7][0]);
+
+	glVertex3fv(&vertices[0][0]); glVertex3fv(&vertices[4][0]);
+	glVertex3fv(&vertices[1][0]); glVertex3fv(&vertices[5][0]);
+	glVertex3fv(&vertices[2][0]); glVertex3fv(&vertices[6][0]);
+	glVertex3fv(&vertices[3][0]); glVertex3fv(&vertices[7][0]);
+
+	glEnd();
+}

@@ -243,6 +243,27 @@ void BSPNode::Render(Shader* s)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
+void BSPNode::RenderAABB(int Depth)
+{
+	if (visible)
+	{
+		if (Depth == -1 || Depth == this->depth)
+		{
+			aabb.Render();
+		}
+
+		if (left != NULL)
+		{
+			left->RenderAABB(Depth);
+		}
+
+		if (right != NULL)
+		{
+			right->RenderAABB(Depth);
+		}
+	}
+}
+
 void BSPNode::Destroy()
 {
 	if (indices != NULL)

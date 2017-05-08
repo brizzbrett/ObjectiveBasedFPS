@@ -20,6 +20,10 @@ protected:
 	std::vector<Entity*> *entityList; /**<Pointer to a vectory array of Entity pointers */
 	std::vector<Terrain> *terrainList; /**<Pointer to a vector array of Terrains */
 
+	bool aabbOn;
+
+	GLuint skyboxVAO, skyboxVBO;
+	GLuint cubemapTexture;
 	/*
 	* @brief Resource Manager constructor. Internally created
 	*/

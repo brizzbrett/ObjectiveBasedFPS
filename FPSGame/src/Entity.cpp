@@ -12,7 +12,7 @@ Entity::~Entity()
 }
 void Entity::Update()
 {
-	slog("Updating Entities...");
+	//slog("Updating Entities...");
 	modelMatrix = glm::translate(glm::mat4(1.0f), this->position);
 }
 void Entity::Render(Shader* s)

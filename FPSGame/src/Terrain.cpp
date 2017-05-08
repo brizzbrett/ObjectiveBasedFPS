@@ -210,6 +210,11 @@ void Terrain::Render(Player* p, Shader* s)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+void Terrain::RenderAABB(int Depth)
+{
+	tree.RenderAABB(Depth);
+}
+
 void Terrain::Destroy()
 {
 	if (heights != NULL)

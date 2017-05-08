@@ -38,6 +38,7 @@ public:
 	int InitIndexBufferObject();
 	int CheckVisibility(Frustum &frustum, BSPNode **geometryNodes, int &geometryNodesCount);
 	void Render(Shader* s);
+	void RenderAABB(int Depth);
 	void Destroy();
 
 

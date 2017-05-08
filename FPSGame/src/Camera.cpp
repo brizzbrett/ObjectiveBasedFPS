@@ -1,5 +1,8 @@
 #include "Camera.hpp"
 
+#define SCREEN_WIDTH 1280 /**<width of the window */ 
+#define SCREEN_HEIGHT 720 /**<height of the window */ 
+
 Camera::Camera()
 {
 	mousex = 0;
@@ -139,6 +142,9 @@ void Camera::MouseMove(int dx, int dy)
 	float Sensitivity = 0.25f;
 
 	pos -= ref;
+
+	sf::Mouse::setPosition(sf::Vector2i(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), *getWindow());
+	getWindow()->setMouseCursorVisible(false);
 
 	if (dx != 0)
 	{

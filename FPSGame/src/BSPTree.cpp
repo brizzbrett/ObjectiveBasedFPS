@@ -106,7 +106,13 @@ void BSPTree::Render(Shader* s)
 		}
 	}
 }
-
+void BSPTree::RenderAABB(int Depth)
+{
+	if (root != NULL)
+	{
+		root->RenderAABB(Depth);
+	}
+}
 void BSPTree::Destroy()
 {
 	if (root != NULL)
