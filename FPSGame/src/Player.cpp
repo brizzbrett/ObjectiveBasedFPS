@@ -44,7 +44,7 @@ void Player::Render(Shader* s)
 
 	if(model)
 		model->Render(s);
-
+	
 	for (int i = 0; i < projectiles.size(); i++)
 	{
 		projectiles.at(i)->Render(s);

@@ -24,6 +24,8 @@ protected:
 
 	GLuint skyboxVAO, skyboxVBO;
 	GLuint cubemapTexture;
+
+	glm::vec3 lightPos;
 	/*
 	* @brief Resource Manager constructor. Internally created
 	*/

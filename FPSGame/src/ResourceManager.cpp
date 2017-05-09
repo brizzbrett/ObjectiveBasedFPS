@@ -79,6 +79,7 @@ ResourceManager::ResourceManager()
 	cubemapTexture = LoadCubeMap(faces);
 
 	aabbOn = false;
+	lightPos = glm::vec3(1.2f, 1.0f, 2.0f);
 
 	Shader* terrain_S = new Shader("shaders/terrain_vs.glsl", "shaders/terrain_fs.glsl");
 	Shader* model_S = new Shader("shaders/model_vs.glsl", "shaders/model_fs.glsl");
@@ -199,6 +200,8 @@ void ResourceManager::DrawAll()
 	
 	Entity* tempLight = NULL;
 
+	slog("%d,%d,%d", player->camera.ref.x, player->camera.ref.y, player->camera.ref.z);
+
 	glDepthMask(GL_FALSE);// Remember to turn depth writing off
 	glUseProgram(shaderList->at(3)->getProgram());
 	glm::mat4 view = glm::mat4(glm::mat3(player->camera.view));	// Remove any translation component of the view matrix
@@ -206,18 +209,21 @@ void ResourceManager::DrawAll()
 	glUniformMatrix4fv(glGetUniformLocation(shaderList->at(3)->getProgram(), "view"), 1, GL_FALSE, &view[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(shaderList->at(3)->getProgram(), "projection"), 1, GL_FALSE, &projection[0][0]);
 	// skybox cube
-	glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+	glBindVertexArray(skyboxVAO);
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(glGetUniformLocation(shaderList->at(3)->getProgram(), "skybox"), 0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 07);
-	//glBindVertexArray(0);
-	glDepthMask(GL_TRUE);
-	
+	glBindVertexArray(0);
+	glDepthMask(GL_TRUE);	
 
 	glUseProgram(shaderList->at(0)->getProgram());
+	GLint objectColorLoc = glGetUniformLocation(shaderList->at(0)->getProgram(), "objectColor");
+	GLint lightColorLoc = glGetUniformLocation(shaderList->at(0)->getProgram(), "lightColor");
+	GLint lightPosLoc = glGetUniformLocation(shaderList->at(0)->getProgram(), "lightPos");
+	glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
+	glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);
+	glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
 	terrainList->at(0).Render(((Player*)entityList->at(0)), shaderList->at(0));
 
 	if (aabbOn)

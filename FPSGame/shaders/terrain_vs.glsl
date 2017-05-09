@@ -9,9 +9,15 @@ uniform mat4 View;
 uniform mat4 Projection;
 
 out vec2 texCoords;
+out vec3 Normal;  
+out vec3 FragPos; 
 
 void main()
 {
 	gl_Position = Projection * View * Model * vec4(verts_ms, 1.0f);
 	texCoords = uv_ms;	
+
+	Normal = norm_ms;
+
+	FragPos = vec3(Model * vec4(verts_ms, 1.0f));
 }
